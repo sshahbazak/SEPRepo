@@ -7,7 +7,7 @@
 - **Tuesday**: 8:00 AM - 3:00 PM (7)
 - **Wednesday**: Remote
 - **Thursday**: 9:00 AM - 4:00 PM (7)
-- **Friday**: 8:00 AM - 2:00 PM (6), 2:45 PM (presentation)
+- **Friday**: 8:00 AM - 2:00 PM (6)
 
 ### Rafael
 - **Monday**: 6:10 AM to 8:40 AM, 5:20 PM to 7:50 PM
@@ -28,21 +28,21 @@ Generally available 9:00 AM - 4:00 PM on weekdays.
 
 ## SCHEDULE
 
-### Week 1 (May 27th - May 31st): Reading CHI Research Paper and Understand the Project
+- Week 1 (May 27th - May 31st): Reading CHI Research Paper and Understand the Project
 
-### Week 2 (June 3rd - June 7th): Building Fundamentals with Python
+- Week 2 (June 3rd - June 7th): Building Fundamentals with Python
 
-### Week 3 (June 10th - June 14th): Understanding PyGame with a Simple Project
+- Week 3 (June 10th - June 14th): Understanding PyGame with a Simple Project
 
-### Week 4 (June 17th - June 21st): Research Specific Tasks
+- Week 4 (June 17th - June 21st): Research Specific Tasks
 
-### Week 5 (June 24th - June 28th): Research Specific Tasks
+- Week 5 (June 24th - June 28th): Research Specific Tasks
 
-### Week 6 (July 1st - July 5th): Research Specific Tasks
+- Week 6 (July 1st - July 5th): Research Specific Tasks
 
-### Week 7 (July 8th - July 12th): Research Specific Tasks
+- Week 7 (July 8th - July 12th): Research Specific Tasks
 
-### Week 8 (July 15th - July 19th): Poster Presentation Preparation
+- Week 8 (July 15th - July 19th): Poster Presentation Preparation
 
 ## Reading the CHI Research Paper and Understanding the Project:
 

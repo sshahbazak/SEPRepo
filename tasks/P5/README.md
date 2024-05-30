@@ -3,4 +3,4 @@
 ## Tasks
 ### Week 1 : 
 - Summary on CHI Paper. 
-- Learn about Microservices.
+- Learn about MQTT.

@@ -1,7 +1,4 @@
-# Summer Enrichment Project
-
-## Project Overview
-This repository contains the tasks and projects for the Summer Enrichment Program.
+# Summer Enrichment Project Repository
 
 ## Repository Structure
 - `tasks/P3_P4/` - Tasks related to Clustering and Unsupervised Machine Learning.

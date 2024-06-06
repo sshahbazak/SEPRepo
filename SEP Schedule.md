@@ -2,12 +2,14 @@
 
 ## Team Working Hours
 
-### Jonathan and Brett
-- **Monday:** 9:00 AM - 4:00 PM (7 hours)
-- **Tuesday:** 8:00 AM - 3:00 PM (7 hours)
-- **Wednesday:** Remote
-- **Thursday:** 9:00 AM - 4:00 PM (7 hours)
-- **Friday:** 8:00 AM - 2:00 PM (6 hours), 2:45 PM (presentation)
+### Jonathan
+- **Monday:** Research: 9:00-4:00 PM (7 hours)
+- **Tuesday:** Research 9:00-2:00 PM (6 hours), 2-3:30 PM Problem-Solving (7 total hours)
+- **Wednesday:** Remote Research (7 hours total)
+- **Thursday:** 9:00-4:00 PM (7 hours)
+- **Friday:** 9:00-4:00 PM (5 hours), Friday Meeting 1:30-3:30 PM (7 total hours)
+
+### Brett
 
 ### Rafael
 - **Monday:** 6:10 AM - 8:40 AM, 5:20 PM - 7:50 PM

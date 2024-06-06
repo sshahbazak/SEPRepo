@@ -2,12 +2,19 @@
 
 ## Team Working Hours
 
-### Jonathan and Brett
+### Jonathan
 - **Monday:** 9:00 AM - 4:00 PM (7 hours)
 - **Tuesday:** 8:00 AM - 3:00 PM (7 hours)
 - **Wednesday:** Remote
 - **Thursday:** 9:00 AM - 4:00 PM (7 hours)
 - **Friday:** 8:00 AM - 2:00 PM (6 hours), 2:45 PM (presentation)
+
+### Brett
+- **Monday:** 9:30 AM - 3:30 PM (6 lab hours)
+- **Tuesday:** 8:30 AM - 2:00 PM (5.5 lab hours) 2:00 PM - 3:30PM (problem solving) (7 hours)
+- **Wednesday:** 8:30 AM - 2:00 PM (5.5 lab hours) 2:00 PM - 3:30PM (problem solving) (7 hours)
+- **Thursday:** Remote (6 hours)
+- **Friday:** 9:30 AM - 1:30 PM (4 lab hours), 2:00 PM (speaker) 2:45 PM (presentation) 4:30 PM (social events) (9 hours)
 
 ### Rafael
 - **Monday:** 6:10 AM - 8:40 AM, 5:20 PM - 7:50 PM

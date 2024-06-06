@@ -1,0 +1,43 @@
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_iris
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the Iris dataset
+iris = load_iris()
+X = iris.data
+y = iris.target
+
+# Create a DataFrame
+df = pd.DataFrame(X, columns=iris.feature_names)
+df['species'] = y
+
+# Explore the data
+sns.pairplot(df, hue='species')
+plt.show()
+
+# Apply K-means clustering
+kmeans = KMeans(n_clusters=3, random_state=42)
+kmeans.fit(X)
+clusters = kmeans.predict(X)
+df['cluster'] = clusters
+
+# Visualize the clusters
+plt.figure(figsize=(10, 6))
+plt.scatter(df.iloc[:, 0], df.iloc[:, 1], c=clusters, cmap='viridis', marker='o')
+centers = kmeans.cluster_centers_
+plt.scatter(centers[:, 0], centers[:, 1], c='red', s=200, alpha=0.75, marker='x')
+plt.xlabel(iris.feature_names[0])
+plt.ylabel(iris.feature_names[1])
+plt.title('K-means Clustering on Iris Dataset')
+plt.show()
+
+# Evaluate the clustering
+ct = pd.crosstab(df['species'], df['cluster'])
+print(ct)
+
+accuracy = np.sum(np.max(ct.values, axis=1)) / np.sum(ct.values)
+print(f'Clustering Accuracy: {accuracy * 100:.2f}%')
+

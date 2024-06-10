@@ -11,6 +11,13 @@
 
 ### Brett
 
+- **Monday:** 9:30 AM - 3:30 PM (6 lab hours)
+- **Tuesday:** 8:30 AM - 2:00 PM (5.5 lab hours) 2:00 PM - 3:30PM (problem solving) (7 hours)
+- **Wednesday:** 8:30 AM - 2:00 PM (5.5 lab hours) 2:00 PM - 3:30PM (problem solving) (7 hours)
+- **Thursday:** Remote (6 hours)
+- **Friday:** 9:30 AM - 1:30 PM (4 lab hours), 2:00 PM (speaker) 2:45 PM (presentation) 4:30 PM (social events) (9 hours)
+=======
+
 ### Rafael
 - **Monday:** 6:10 AM - 8:40 AM, 5:20 PM - 7:50 PM
 - **Tuesday:** 6:10 AM - 8:40 AM, 5:20 PM - 7:50 PM

@@ -26,7 +26,7 @@
 - **Friday:** Remote
 
 ## Weekly Meeting Time
-- **Thursday:** 9:00 AM
+- **Monday:** 11:00 AM
 
 In the Weekly meeting, we will discuss the progress made in the prior week and what you will be working on in the next week. If you have any doubts or concerns, feel free to drop me an email.
 

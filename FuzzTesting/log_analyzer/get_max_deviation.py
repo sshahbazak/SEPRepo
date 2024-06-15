@@ -31,6 +31,7 @@ def get_names():
 		os.system("ulog2csv " + blueprint_name)
 	blueprint_name = (blueprint_name.rsplit("/", 1)[1]).split(".")[0] + "_vehicle_local_position_0.csv"
 	contender_list = glob.glob(path + "contender_logs" + "/*.ulg")
+	print(contender_list)
 	return blueprint_name, contender_list[0]
 
 def get_closest_timestamp(value, arr, timestamps):
@@ -123,4 +124,7 @@ def log_parser():
 
 	os.system("cd " + path)
 	os.system("rm -r "+path+"ulog2csv_workspace")
+	os.system("rm -r "+path+"contender_logs/*")
 	return row
+
+# print(log_parser())

@@ -435,8 +435,8 @@ class Fuzz_Testor():
    
 fuzz_testor = Fuzz_Testor()
 fuzz_test = Fuzz_Test(drone_id="Polkadot",
-modes=['POSCTL'],
-geofence=[0],
+modes=['POSCTL', 'OFFBOARD', 'STABILIZED'],
+geofence=[0, 2, 3],
 throttle=[2, 3]
 )
 fuzz_testor.run_test(fuzz_test)

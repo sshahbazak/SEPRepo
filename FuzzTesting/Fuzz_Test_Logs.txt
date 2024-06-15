@@ -1,2 +1,3 @@
-2024-06-15/07_27_00.ulg, ('POSCTL', 550, 0), {"mission_complete": false}, 
-2024-06-15/07_31_19.ulg, ('POSCTL', 260, 0), {"mission_complete": true}, 
+2024-06-15/07_39_14.ulg, ('POSCTL', 260, 0), {"mission_complete": false}, 
+2024-06-15/07_40_56.ulg, ('POSCTL', 550, 0), {"mission_complete": true}, 
+2024-06-15/07_42_29.ulg, ('STABILIZED', 225, 0), {"mission_complete": false}, 

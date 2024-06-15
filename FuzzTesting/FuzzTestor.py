@@ -325,7 +325,6 @@ class Fuzz_Testor():
             if curr_state == "success":
                 self.mission_time.clear()
                 ulg_file_path = self.docker_interface.get_latest_ulg_file()
-                # self.save_contender_file(ulg_file_path)
                 self.write_to_file(ulg_file_path,self.recent_test,{"mission_complete":True})
                 self.save_executed_tests()
                 #force auto.land to reset in case of a manual switch
@@ -379,7 +378,6 @@ class Fuzz_Testor():
                         self.mission_abort.set()
                         print('[fuzz_testor] time exceeded, restarting state machine')
                         ulg_file_path = self.docker_interface.get_latest_ulg_file()
-                        # self.save_contender_file(ulg_file_path)
                         self.write_to_file(ulg_file_path, self.recent_test, {"mission_complete": False})
                         self.save_executed_tests()
                         self._abort_mission()
@@ -389,15 +387,6 @@ class Fuzz_Testor():
                         self.enqueue_mqtt_message()
                         self.message_sent = False 
                         
-    # '''
-    # Function to copy the log file from the px4 container into the fuzz service container.
-    # '''
-    # def save_contender_file(self, ulg_file_path):
-    #     source_container = "dr-onboardautonomy-px4"
-    #     source_id = os.popen(f"docker ps -qf name={source_container}").read().strip()
-    #     source_path = "/home/user/Firmware/build/px4_sitl_default/logs/"+ulg_file_path
-    #     destination_path = "/catkin_ws/src/fuzz_test_service/log_analyzer/contender_logs"
-    #     os.system(f"docker cp {source_id}:{source_path} {destination_path}")
 
 
     def write_to_file(self, ulg_file_path, recent_test, json_message):
@@ -447,7 +436,7 @@ class Fuzz_Testor():
 fuzz_testor = Fuzz_Testor()
 fuzz_test = Fuzz_Test(drone_id="Polkadot",
 modes=['POSCTL'],
-geofence=[0, 2],
+geofence=[0],
 throttle=[2, 3]
 )
 fuzz_testor.run_test(fuzz_test)

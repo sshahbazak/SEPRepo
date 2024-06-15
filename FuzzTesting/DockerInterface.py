@@ -11,6 +11,8 @@ class Docker_Interface:
         self.state_machine_start = f"/bin/bash -c 'cd /catkin_ws/src/dr_onboard_autonomy/src/dr_onboard_autonomy && python state_machine.py _uav_name:={self.uav_id} _mqtt_host:=mqtt _local_mqtt_host:=mqtt_local'"
         self.dev_image_id = "dr-onboardautonomy-vs-code"
         self.px4_image_id = "dr-onboardautonomy-px4"
+        self.airlease_id = "microservice-air-lease-air-lease"
+        self.airlease = self.get_container_name_by_image_id(self.airlease_id)
         # initialize process to None
         self.process = None
         # get container name to use
@@ -44,6 +46,15 @@ class Docker_Interface:
         else:
             print(f"[docker_interface] Failed to start PX4 container {self.px4_container}")
 
+    def restart_airlease(self):
+        """Start the PX4 container."""
+        command = f"docker restart {self.airlease}"
+        result = os.system(command)
+        if result == 0:
+            print(f"[docker_interface] Started airlease container {self.airlease}")
+        else:
+            print(f"[docker_interface] Failed to start airlease container {self.airlease}")
+
     def stop_px4(self):
         """Stop the PX4 container."""
         command = f"docker stop {self.px4_container}"
@@ -72,6 +83,7 @@ class Docker_Interface:
             else:
                 print(f'[docker_interface] Error while killing the process: {e}')
         self.stop_px4()
+        self.restart_airlease()
         self.start_px4()
     
     def get_latest_ulg_file(self):

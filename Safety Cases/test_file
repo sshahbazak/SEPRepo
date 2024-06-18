@@ -1,0 +1,34 @@
+from graphviz import Digraph
+
+# Function to wrap text
+def wrap_text(text, max_width):
+    words = text.split()
+    wrapped_text = ""
+    line = ""
+    for word in words:
+        if len(line) + len(word) + 1 <= max_width:
+            line += " " + word if line else word
+        else:
+            wrapped_text += line + "\n"
+            line = word
+    if line:
+        wrapped_text += line
+    return wrapped_text
+
+# Create a new directed graph
+dot = Digraph()
+
+# Add nodes and edges with dynamic word wrapping
+dot.node('G1', wrap_text('Goal G1\nWhen needed the kill switch stops the motors on the targeted drone.', 25), shape='record', fillcolor='gray80', style='filled')
+dot.node('S1', wrap_text('Strategy\nArgue that the RPIC can kill motors on the targeted drone when needed.', 25), margin='0', width='4', height='.6', shape='polygon', skew='0.2', fillcolor='gray96', style='filled')
+dot.node('O1', wrap_text('Solution O1\nHiFUZZ tests pass on combos of flight modes, flying states, and killswitch press durations.', 25), shape='circle', margin='0', height='1.9', style='filled')
+dot.edge('G1', 'S1')
+dot.edge('S1', 'O1')
+
+# Render the graph to a plain text file
+dot.format = 'plain'
+dot.render('output_graph', format='plain', cleanup=True)
+
+# Print the plain text output
+with open('output_graph.plain', 'r') as file:
+   print(file.read())

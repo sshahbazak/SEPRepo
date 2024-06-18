@@ -5,6 +5,8 @@ from sklearn.datasets import make_classification
 import modelTrain as mt
 import FuzzTest as ft
 
+# from Fuzz import FuzzTestor
+
 # Generate a synthetic dataset (replace this with your real dataset)
 X, y = make_classification(n_samples=100, n_features=10, random_state=42)
 data = pd.DataFrame(X, columns=[f'feature_{i}' for i in range(10)])
@@ -80,10 +82,13 @@ def mutate(mutant_candidates_df):
 
     # Iterate over each sampled row
     for index, row in sampled_df.iterrows():
-        # Randomly select a column to mutate
-        column_to_mutate = random.choice(mutant_candidates_df.columns)
+        #  Get the list of columns excluding 'modes'
+        columns_excluding_modes = [col for col in mutant_candidates_df.columns if col != 'modes']
+
+        # Randomly select a column from the filtered list   
+        column_to_mutate = random.choice(columns_excluding_modes)
         # print(column_to_mutate)
-        
+        sampled_df.at[index, 'modes'] = random.choice(feature_dict['modes'])
         if column_to_mutate == 'GF':
             # Mutate GF, GFPRED, and GFACT specifically
             sampled_df.at[index, 'GF'] = random.choice(['Yes', 'No'])
@@ -94,8 +99,8 @@ def mutate(mutant_candidates_df):
                 sampled_df.at[index, 'GFPRED'] = random.choice(['Yes', 'No'])
                 sampled_df.at[index, 'GFACT'] = random.choice(feature_dict['GFACT'])
         # Mutate other columns based on their dictionary of eligible values
-        elif column_to_mutate == 'modes':
-            sampled_df.at[index, 'modes'] = random.choice(feature_dict['modes'])
+        # elif column_to_mutate == 'modes':
+            
         elif column_to_mutate == 'states':
             sampled_df.at[index, 'states'] = random.choice(feature_dict['states'])
         elif column_to_mutate == 'throttle':
@@ -120,22 +125,22 @@ def run_probe(df):
         fuzz_test_args = {'drone_id': 'Polkadot'}
 
         # Dynamically add arguments if they are not None
-        if not pd.isna(row['modes']):
-            print(row['modes'])
-            fuzz_test_args['modes'] = [row['modes']]
-        if row['states'] is not None:
+        # if not pd.isna(row['modes']):
+        #     print(row['modes'])
+        fuzz_test_args['modes'] = [row['modes']]
+        if pd.isna(row['states']):
             fuzz_test_args['states'] = [row['states']]
-        if row['GFACT'] is not None:
+        if pd.isna(row['GFACT']):
             fuzz_test_args['GFACT'] = [row['GFACT']]
-        if row['throttle'] is not None:
+        if pd.isna(row['throttle']):
             fuzz_test_args['throttle'] = [row['throttle']]
 
         print(fuzz_test_args)
         # Call the Fuzz_Test function with the unpacked dictionary
-        result = ft.Fuzz_Test(**fuzz_test_args)
-        results.append(result)
+    #     result = ft.Fuzz_Test(**fuzz_test_args)
+    #     results.append(result)
     
-    return results
+    # return results
 
 # Genetic Algorithm
 for generation in range(num_generations):
@@ -181,39 +186,39 @@ for generation in range(num_generations):
     merged_df = pd.concat([crossover_df, mutated_df])
     # print(merged_df)
     results = run_probe(merged_df)
-    print('[Genetic Algorithm] Adding probe results into csv file')
-    # Flatten the list of lists into a single list of dictionaries
-    flattened_data = [item for sublist in results for item in sublist]
+    # print('[Genetic Algorithm] Adding probe results into csv file')
+    # # Flatten the list of lists into a single list of dictionaries
+    # flattened_data = [item for sublist in results for item in sublist]
 
-    # Create DataFrame
-    result_df = pd.DataFrame(flattened_data)
+    # # Create DataFrame
+    # result_df = pd.DataFrame(flattened_data)
 
-    # Rename DataFrame columns to match CSV columns
-    result_df = result_df.rename(columns={
-        'mode': 'initial_mode',
-        'state': 'states',
-        'KillSwitch': 'kill_switch'
-    })
+    # # Rename DataFrame columns to match CSV columns
+    # result_df = result_df.rename(columns={
+    #     'mode': 'initial_mode',
+    #     'state': 'states',
+    #     'KillSwitch': 'kill_switch'
+    # })
 
-    # Ensure the DataFrame columns are in the same order as the CSV file columns
-    result_df = result_df[['initial_mode', 'states', 'throttle', 'GF', 'GFPRED', 'GFACT', 'kill_switch', 'max_deviation', 'max_altitude', 'duration', 'final_landing_state', 'freefall_occurred', 'mission_complete']]
+    # # Ensure the DataFrame columns are in the same order as the CSV file columns
+    # result_df = result_df[['initial_mode', 'states', 'throttle', 'GF', 'GFPRED', 'GFACT', 'kill_switch', 'max_deviation', 'max_altitude', 'duration', 'final_landing_state', 'freefall_occurred', 'mission_complete']]
 
-    # print(result_df)
-    # Read the existing CSV file
-    csv_file_path = 'sample.csv'
-    csv_df = pd.read_csv(csv_file_path)
+    # # print(result_df)
+    # # Read the existing CSV file
+    # csv_file_path = 'sample.csv'
+    # csv_df = pd.read_csv(csv_file_path)
 
-    # Append the DataFrame data to the CSV data
-    combined_df = pd.concat([csv_df, result_df], ignore_index=True)
-    combined_df.fillna(value = 'None',inplace=True)
-    # Check for NaN values after filling
-    print("NaN values after filling:")
-    print(combined_df.isna().sum())
+    # # Append the DataFrame data to the CSV data
+    # combined_df = pd.concat([csv_df, result_df], ignore_index=True)
+    # combined_df.fillna(value = 'None',inplace=True)
+    # # Check for NaN values after filling
+    # print("NaN values after filling:")
+    # print(combined_df)
 
-    # Save the combined data back to the CSV file
-    combined_df.to_csv(csv_file_path, index=False)
+    # # Save the combined data back to the CSV file
+    # # combined_df.to_csv(csv_file_path, index=False)
 
-    print("Data appended and saved to CSV file successfully.")
+    # print("Data appended and saved to CSV file successfully.")
 
     
     

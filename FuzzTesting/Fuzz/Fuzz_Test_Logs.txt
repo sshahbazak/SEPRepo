@@ -1,0 +1,55 @@
+{
+    "filename": "2024-06-17/00_54_40.ulg",
+    "mission": "('POSCTL', 550, 5)",
+    "mission_complete": false,
+    "max_deviation": 24.418654000000004,
+    "max_altitude": 4.6942677,
+    "duration": "0:02:30",
+    "final_landing_state": false,
+    "freefall_occurred": false
+}{
+    "filename": "2024-06-17/00_57_30.ulg",
+    "mission": "('STABILIZED', 435, 5)",
+    "mission_complete": false,
+    "max_deviation": 23.656265,
+    "max_altitude": 6.248496,
+    "duration": "0:01:21",
+    "final_landing_state": false,
+    "freefall_occurred": false
+}{
+    "filename": "2024-06-17/00_59_05.ulg",
+    "mission": "('AUTO.RTL', 550, 5)",
+    "mission_complete": false,
+    "max_deviation": 24.662563,
+    "max_altitude": 5.1548185,
+    "duration": "0:00:40",
+    "final_landing_state": true,
+    "freefall_occurred": false
+}{
+    "filename": "2024-06-17/01_00_40.ulg",
+    "mission": "('AUTO.LAND', 550, 5)",
+    "mission_complete": false,
+    "max_deviation": 25.038523,
+    "max_altitude": 4.7290087,
+    "duration": "0:00:36",
+    "final_landing_state": true,
+    "freefall_occurred": false
+}{
+    "filename": "2024-06-17/01_02_15.ulg",
+    "mission": "('ALTCTL', 550, 5)",
+    "mission_complete": false,
+    "max_deviation": 24.123006000000004,
+    "max_altitude": 4.670024,
+    "duration": "0:01:21",
+    "final_landing_state": false,
+    "freefall_occurred": false
+}{
+    "filename": "2024-06-17/01_03_51.ulg",
+    "mission": "('AUTO.LOITER', 550, 5)",
+    "mission_complete": false,
+    "max_deviation": 24.585741,
+    "max_altitude": 4.7119946,
+    "duration": "0:01:21",
+    "final_landing_state": false,
+    "freefall_occurred": false
+}

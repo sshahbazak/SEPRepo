@@ -26,7 +26,7 @@ def Fuzz_Test(drone_id, modes, throttle, states=None, GFACT=None):
     results = []
 
     if not GFACT:
-        combinations = list(itertools.product(modes, mission_states, throttle))
+        combinations = list(itertools.product(modes, mission_states, throttle or [None]))
         for mode, state, thr in combinations:
             result = {
                 'mode': mode,
@@ -45,7 +45,7 @@ def Fuzz_Test(drone_id, modes, throttle, states=None, GFACT=None):
             }
             results.append(result)
     else:
-        combinations = list(itertools.product(modes, GFACT_states, throttle))
+        combinations = list(itertools.product(modes, GFACT_states, throttle or [None]))
         for mode, state, thr in combinations:
             result = {
                 'mode': mode,

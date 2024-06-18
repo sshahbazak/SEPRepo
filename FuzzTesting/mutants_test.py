@@ -16,18 +16,16 @@ def mutate(mutant_candidates_df):
     # Randomly sample 10 rows from mutant_candidates_df
     sample_indices = random.sample(range(len(mutant_candidates_df)), min(10, len(mutant_candidates_df)))
     sampled_df = mutant_candidates_df.iloc[sample_indices].copy()
-    
-    print('Original Data')
-    print(sampled_df)
-    print('-------------------------------------------------------------------------')
-
 
     # Iterate over each sampled row
     for index, row in sampled_df.iterrows():
-        # Randomly select a column to mutate
-        column_to_mutate = random.choice(mutant_candidates_df.columns)
-        print(column_to_mutate)
-        
+        #  Get the list of columns excluding 'modes'
+        columns_excluding_modes = [col for col in mutant_candidates_df.columns if col != 'modes']
+
+        # Randomly select a column from the filtered list   
+        column_to_mutate = random.choice(columns_excluding_modes)
+        # print(column_to_mutate)
+        sampled_df.at[index, 'modes'] = random.choice(feature_dict['modes'])
         if column_to_mutate == 'GF':
             # Mutate GF, GFPRED, and GFACT specifically
             sampled_df.at[index, 'GF'] = random.choice(['Yes', 'No'])
@@ -38,8 +36,8 @@ def mutate(mutant_candidates_df):
                 sampled_df.at[index, 'GFPRED'] = random.choice(['Yes', 'No'])
                 sampled_df.at[index, 'GFACT'] = random.choice(feature_dict['GFACT'])
         # Mutate other columns based on their dictionary of eligible values
-        elif column_to_mutate == 'modes':
-            sampled_df.at[index, 'modes'] = random.choice(feature_dict['modes'])
+        # elif column_to_mutate == 'modes':
+            
         elif column_to_mutate == 'states':
             sampled_df.at[index, 'states'] = random.choice(feature_dict['states'])
         elif column_to_mutate == 'throttle':
@@ -56,8 +54,6 @@ def mutate(mutant_candidates_df):
                 sampled_df.at[index, 'GFACT'] = random.choice(feature_dict['GFACT'])
             else:
                 sampled_df.at[index, 'GFACT'] = None
-    
-    
     return sampled_df
 
 

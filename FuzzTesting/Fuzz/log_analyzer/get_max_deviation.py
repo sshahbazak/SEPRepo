@@ -41,6 +41,10 @@ def get_closest_timestamp(value, arr, timestamps):
 
 def log_parser():
 	#set threshold for what to consider a deviation from the intended flight path
+	try:
+		os.system("rm -r "+path+"ulog2csv_workspace")
+	except:
+		pass
 	threshold = 1
 
 	blueprint_name, contender = get_names()

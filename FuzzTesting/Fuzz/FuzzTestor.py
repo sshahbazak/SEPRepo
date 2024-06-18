@@ -18,11 +18,11 @@ from dataclasses import dataclass, field, asdict
 from time import gmtime, strftime
 import numpy as np
 from typing import Tuple
-from DockerInterface import Docker_Interface
-from entities import Fuzz_Test
-from ROSInterface import ROS_Interface
+from .DockerInterface import Docker_Interface
+from .entities import Fuzz_Test
+from .ROSInterface import ROS_Interface
 import sys 
-from  log_analyzer import get_max_deviation
+from  .log_analyzer import get_max_deviation
 import glob
 
 #testing
@@ -168,7 +168,8 @@ class Fuzz_Testor():
         self.mqtt_client.loop_start()
 
     def __init_mission_file(self) -> None:
-        f = open("missions/FUZZ_MISSION.json")
+        file_path = os.path.join(os.path.dirname(__file__), "missions", "FUZZ_MISSION.json")
+        f = open(file_path, 'r')
         self.mission_file = json.load(f)
         f.close()
         return 
@@ -475,10 +476,9 @@ class Fuzz_Testor():
    
 fuzz_testor = Fuzz_Testor()
 fuzz_test = Fuzz_Test(drone_id="Polkadot",
-modes=['POSCTL', 'OFFBOARD', 'STABILIZED'],
-geofence=[0, 2, 3],
-states=['Takeoff','BriarWaypoint'],
-throttle=[2, 3]
+modes=['ALTCTL', 'POSCTL', 'STABILIZED', 'AUTO.LOITER', 'AUTO.RTL', 'AUTO.LAND'],
+geofence=[5],
+throttle=[3]
 )
 fuzz_testor.run_test(fuzz_test)
 

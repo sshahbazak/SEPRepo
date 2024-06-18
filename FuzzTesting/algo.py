@@ -14,7 +14,7 @@ data['target'] = y
 
 # Parameters
 # population_size = 50
-num_generations = 10
+num_generations = 1
 # mutation_rate = 0.01
 data_file = 'sample.csv'
 num_parents = 30
@@ -82,13 +82,12 @@ def mutate(mutant_candidates_df):
 
     # Iterate over each sampled row
     for index, row in sampled_df.iterrows():
-        #  Get the list of columns excluding 'modes'
-        columns_excluding_modes = [col for col in mutant_candidates_df.columns if col != 'modes']
+        # print(row)
 
         # Randomly select a column from the filtered list   
-        column_to_mutate = random.choice(columns_excluding_modes)
+        column_to_mutate = random.choice(mutant_candidates_df.columns)
         # print(column_to_mutate)
-        sampled_df.at[index, 'modes'] = random.choice(feature_dict['modes'])
+        
         if column_to_mutate == 'GF':
             # Mutate GF, GFPRED, and GFACT specifically
             sampled_df.at[index, 'GF'] = random.choice(['Yes', 'No'])
@@ -100,9 +99,16 @@ def mutate(mutant_candidates_df):
                 sampled_df.at[index, 'GFACT'] = random.choice(feature_dict['GFACT'])
         # Mutate other columns based on their dictionary of eligible values
         # elif column_to_mutate == 'modes':
-            
+        elif  column_to_mutate == 'modes':
+            sampled_df.at[index, 'modes'] = random.choice(feature_dict['modes'])
         elif column_to_mutate == 'states':
-            sampled_df.at[index, 'states'] = random.choice(feature_dict['states'])
+            choice = random.choice(feature_dict['states'])
+            if choice != 'Flying':
+                sampled_df.at[index, 'states'] = choice
+                sampled_df.at[index, 'GFPRED'] = None
+                sampled_df.at[index, 'GFACT'] = None
+            else:
+                sampled_df.at[index, 'states'] = choice
         elif column_to_mutate == 'throttle':
             sampled_df.at[index, 'throttle'] = random.choice(feature_dict['throttle'])
         elif column_to_mutate == 'GFPRED':
@@ -128,11 +134,11 @@ def run_probe(df):
         # if not pd.isna(row['modes']):
         #     print(row['modes'])
         fuzz_test_args['modes'] = [row['modes']]
-        if pd.isna(row['states']):
+        if not pd.isna(row['states']):
             fuzz_test_args['states'] = [row['states']]
-        if pd.isna(row['GFACT']):
+        if not pd.isna(row['GFACT']):
             fuzz_test_args['GFACT'] = [row['GFACT']]
-        if pd.isna(row['throttle']):
+        if not pd.isna(row['throttle']) and row['throttle'] in [0, 260, 550, 600, 615]:
             fuzz_test_args['throttle'] = [row['throttle']]
 
         print(fuzz_test_args)
@@ -185,7 +191,11 @@ for generation in range(num_generations):
     print('[Genetic Algorithm] Running probes')
     merged_df = pd.concat([crossover_df, mutated_df])
     # print(merged_df)
+    # print(merged_df)
     results = run_probe(merged_df)
+
+
+    
     # print('[Genetic Algorithm] Adding probe results into csv file')
     # # Flatten the list of lists into a single list of dictionaries
     # flattened_data = [item for sublist in results for item in sublist]

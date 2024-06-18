@@ -8,7 +8,7 @@ import pandas as pd
 feature_dict = {
     'modes' : ['POSCTL','STABILIZED', 'OFFBOARD', 'ALTCTL', 'AUTO.LOITER', 'AUTO.RTL', 'AUTO.LAND'],
     'states' : ['Flying', 'Land', 'Disarm', 'Takeoff', 'Arm', 'Hover'],
-    'GFACT' : [None, "Warning", "Hold mode", "Return mode", "Terminate", "Land mode"],
+    'GFACT' : ["Warning", "Hold mode", "Return mode", "Terminate", "Land mode"],
     'throttle' : [0, 225, -100, 260, 600, 100, 550, 445, 435, 450, 615, 570, 300, None]
 }
 
@@ -19,13 +19,12 @@ def mutate(mutant_candidates_df):
 
     # Iterate over each sampled row
     for index, row in sampled_df.iterrows():
-        #  Get the list of columns excluding 'modes'
-        columns_excluding_modes = [col for col in mutant_candidates_df.columns if col != 'modes']
+        print(row)
 
         # Randomly select a column from the filtered list   
-        column_to_mutate = random.choice(columns_excluding_modes)
+        column_to_mutate = random.choice(mutant_candidates_df.columns)
         # print(column_to_mutate)
-        sampled_df.at[index, 'modes'] = random.choice(feature_dict['modes'])
+        
         if column_to_mutate == 'GF':
             # Mutate GF, GFPRED, and GFACT specifically
             sampled_df.at[index, 'GF'] = random.choice(['Yes', 'No'])
@@ -37,9 +36,16 @@ def mutate(mutant_candidates_df):
                 sampled_df.at[index, 'GFACT'] = random.choice(feature_dict['GFACT'])
         # Mutate other columns based on their dictionary of eligible values
         # elif column_to_mutate == 'modes':
-            
+        elif  column_to_mutate == 'modes':
+            sampled_df.at[index, 'modes'] = random.choice(feature_dict['modes'])
         elif column_to_mutate == 'states':
-            sampled_df.at[index, 'states'] = random.choice(feature_dict['states'])
+            choice = random.choice(feature_dict['states'])
+            if choice != 'Flying':
+                sampled_df.at[index, 'states'] = choice
+                sampled_df.at[index, 'GFPRED'] = None
+                sampled_df.at[index, 'GFACT'] = None
+            else:
+                sampled_df.at[index, 'states'] = choice
         elif column_to_mutate == 'throttle':
             sampled_df.at[index, 'throttle'] = random.choice(feature_dict['throttle'])
         elif column_to_mutate == 'GFPRED':

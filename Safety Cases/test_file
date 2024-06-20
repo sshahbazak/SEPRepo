@@ -1,34 +1,61 @@
 from graphviz import Digraph
+import tkinter as tk
+from tkinter import ttk
+from PIL import Image, ImageTk
 
-# Function to wrap text
-def wrap_text(text, max_width):
+def wrap_text(text, width):
     words = text.split()
-    wrapped_text = ""
-    line = ""
-    for word in words:
-        if len(line) + len(word) + 1 <= max_width:
-            line += " " + word if line else word
-        else:
-            wrapped_text += line + "\n"
-            line = word
-    if line:
-        wrapped_text += line
-    return wrapped_text
+    wrapped_lines = [' '.join(words[i:i+width]) for i in range(0, len(words), width)]
+    return '\n'.join(wrapped_lines)
+
+# Specifications for the safety case
+specifications = {
+    'nodes': [
+        {'id': 'G1', 'label': 'Goal G1', 'text': 'When needed the kill switch stops the motors on the targeted drone.', 'shape': 'rectangle', 'fillcolor': 'gray80', 'margin': '0.1'},
+        {'id': 'S1', 'label': 'Strategy', 'text': 'Argue that the RPIC can kill motors on the targeted drone when needed.', 'shape': 'parallelogram', 'fillcolor': 'gray96', 'margin': '0.0'},
+        {'id': 'O1', 'label': 'Solution O1', 'text': 'HiFUZZ tests pass on combos of flight modes, flying states, and killswitch press durations.', 'shape': 'circle', 'fillcolor': 'gray80', 'margin': '0.1'}
+    ],
+    'edges': [
+        ('G1', 'S1'),
+        ('S1', 'O1')
+    ]
+}
 
 # Create a new directed graph
 dot = Digraph()
 
-# Add nodes and edges with dynamic word wrapping
-dot.node('G1', wrap_text('Goal G1\nWhen needed the kill switch stops the motors on the targeted drone.', 25), shape='record', fillcolor='gray80', style='filled')
-dot.node('S1', wrap_text('Strategy\nArgue that the RPIC can kill motors on the targeted drone when needed.', 25), margin='0', width='4', height='.6', shape='polygon', skew='0.2', fillcolor='gray96', style='filled')
-dot.node('O1', wrap_text('Solution O1\nHiFUZZ tests pass on combos of flight modes, flying states, and killswitch press durations.', 25), shape='circle', margin='0', height='1.9', style='filled')
-dot.edge('G1', 'S1')
-dot.edge('S1', 'O1')
+# Add nodes with word wrapping and reduced font size
+for node in specifications['nodes']:
+    wrap_width = 3 if node['shape'] == 'circle' else 7
+    text = wrap_text(node['text'], wrap_width)
+    label = f'<{node["label"]}>\n{text}' if node['label'] else text
+    node_attrs = {
+        'fontsize': '15',
+        'margin': node.get('margin', '0.1'),
+        'fixedsize': 'false'
+    }
+    dot.node(node['id'], label, shape=node['shape'], fillcolor=node['fillcolor'], style='filled', **node_attrs)
 
-# Render the graph to a plain text file
-dot.format = 'plain'
-dot.render('output_graph', format='plain', cleanup=True)
+# Add edges
+for edge in specifications['edges']:
+    dot.edge(*edge)
 
-# Print the plain text output
-with open('output_graph.plain', 'r') as file:
-   print(file.read())
+# Render the graph to a PNG file
+graph_image_path = '/mnt/data/output_graph'
+dot.render(graph_image_path, format='png')
+
+# Create a Tkinter window
+root = tk.Tk()
+root.title("Graph Visualization")
+
+# Load the image using PIL
+image = Image.open(graph_image_path + '.png') # Add the .png extension
+photo = ImageTk.PhotoImage(image)
+
+# Create a label to display the image
+label = ttk.Label(root, image=photo)
+label.image = photo # Keep a reference to the image
+label.pack()
+
+# Start the Tkinter main loop
+root.mainloop()

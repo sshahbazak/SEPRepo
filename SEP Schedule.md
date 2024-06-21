@@ -10,7 +10,6 @@
 - **Friday:** 9:00-4:00 PM (5 hours), Friday Meeting 1:30-3:30 PM (7 total hours)
 
 ### Brett
-
 - **Monday:** 9:30 AM - 3:30 PM (6 lab hours)
 - **Tuesday:** 8:30 AM - 2:00 PM (5.5 lab hours) 2:00 PM - 3:30PM (problem solving) (7 hours)
 - **Wednesday:** 8:30 AM - 2:00 PM (5.5 lab hours) 2:00 PM - 3:30PM (problem solving) (7 hours)

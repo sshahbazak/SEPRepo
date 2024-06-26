@@ -1,0 +1,231 @@
+# # import pandas as pd
+# # from graphviz import Digraph
+# # import tkinter as tk
+# # from PIL import Image, ImageTk
+# # from tkinter import ttk
+
+# # # Function to read Excel data and create the fault tree
+# # def create_fault_tree_from_excel(file_path):
+# #     # Load data from Excel
+# #     df = pd.read_excel(file_path, sheet_name='Jane')
+    
+# #     # Create a new directed graph
+# #     dot = Digraph()
+    
+# #     # Add nodes to the graph
+# #     for _, row in df.iterrows():
+# #         node_id = row['ID']
+# #         label = row['Label']
+# #         node_type = row['Type']
+# #         shape = 'ellipse' if node_type == 'Basic Event' else 'diamond' if node_type == 'OR' else 'box'
+        
+# #         dot.node(node_id, label, shape=shape)
+    
+# #     # Add edges to the graph
+# #     for _, row in df.iterrows():
+# #         if pd.notnull(row['Parent ID']):
+# #             dot.edge(row['Parent ID'], row['ID'])
+    
+# #     return dot
+
+# # # File path to the Excel file (INCLUDE DOUBLE BACKLASH FOR FILE PATH TO WORK)
+# # file_path = 'C:\\Users\\jmimnaugh\\Documents\\VScode\\shahbaz_repo\\SEPRepo\\safety_cases\\drone_dataset.xlsx'
+
+# # # Create the fault tree from Excel data
+# # fault_tree = create_fault_tree_from_excel(file_path)
+
+# # # Render the graph to a PNG file
+# # graph_image_path = 'fault_tree'
+# # fault_tree.render(graph_image_path, format='png')
+
+# # # Display the graph in a Tkinter window
+# # def display_graph_in_tkinter(image_path):
+# #     # Create a Tkinter window
+# #     root = tk.Tk()
+# #     root.title("Fault Tree Visualization")
+    
+# #     # Load the image using PIL
+# #     image = Image.open(image_path + '.png') # Add the .png extension
+# #     photo = ImageTk.PhotoImage(image)
+    
+# #     # Create a label to display the image
+# #     label = ttk.Label(root, image=photo)
+# #     label.image = photo # Keep a reference to the image
+# #     label.pack()
+    
+# #     # Start the Tkinter main loop
+# #     root.mainloop()
+
+# # # Display the generated fault tree
+# # display_graph_in_tkinter(graph_image_path)
+
+
+
+
+# import pandas as pd
+# from graphviz import Digraph
+# import tkinter as tk
+# from PIL import Image, ImageTk
+# from tkinter import ttk
+
+# def create_fault_tree_from_excel(file_path):
+#     # Load data from Excel
+#     df = pd.read_excel(file_path, sheet_name='Jane')
+
+#     # Ensure column names are stripped of leading/trailing spaces
+#     df.columns = df.columns.str.strip()
+
+#     # Create a new directed graph
+#     dot = Digraph()
+
+#     # Add nodes to the graph
+#     for _, row in df.iterrows():
+#         node_id = row['ID']
+#         label = row['Label']
+#         node_type = row['Type'].strip().lower()
+        
+#         if node_type == 'basic event':
+#             shape = 'ellipse'
+#         elif node_type == 'and':
+#             shape = 'box'
+#         elif node_type == 'or':
+#             shape = 'diamond'
+#         else:
+#             shape = 'ellipse'  # Default shape for unspecified types
+        
+#         dot.node(node_id, label, shape=shape)
+    
+#     # Add edges to the graph
+#     for _, row in df.iterrows():
+#         if pd.notnull(row['Parent ID']):
+#             dot.edge(row['Parent ID'], row['ID'])
+    
+#     return dot
+
+# # File path to the Excel file
+# file_path = 'C:\\Users\\jmimnaugh\\Documents\\VScode\\shahbaz_repo\\SEPRepo\\safety_cases\\drone_dataset.xlsx'
+
+# # Create the fault tree from Excel data
+# fault_tree = create_fault_tree_from_excel(file_path)
+
+# # Render the graph to a PNG file
+# graph_image_path = 'fault_tree'
+# fault_tree.render(graph_image_path, format='png')
+
+# # Display the graph in a Tkinter window
+# def display_graph_in_tkinter(image_path):
+#     # Create a Tkinter window
+#     root = tk.Tk()
+#     root.title("Fault Tree Visualization")
+    
+#     # Load the image using PIL
+#     image = Image.open(image_path + '.png')  # Add the .png extension
+#     photo = ImageTk.PhotoImage(image)
+    
+#     # Create a label to display the image
+#     label = ttk.Label(root, image=photo)
+#     label.image = photo  # Keep a reference to the image
+#     label.pack()
+    
+#     # Start the Tkinter main loop
+#     root.mainloop()
+
+# # Display the generated fault tree
+# display_graph_in_tkinter(graph_image_path)
+
+
+
+
+# A FAULT TREE CREATED FROM AN EXAMPLE DATASET (IRISES)
+
+import pandas as pd
+from graphviz import Digraph
+import tkinter as tk
+from PIL import Image, ImageTk
+from tkinter import ttk
+from sklearn.datasets import load_iris
+
+# Load the Iris dataset
+iris = load_iris()
+df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+df['target'] = iris.target
+
+# Create a hypothetical fault tree based on some relationships in the Iris dataset
+# For simplicity, we assume some arbitrary relationships between features and target
+fault_tree_data = {
+    'ID': ['N1', 'N2', 'N3', 'N4', 'N5', 'N6', 'N7'],
+    'Label': [
+        'High Sepal Length',
+        'High Sepal Width',
+        'High Petal Length',
+        'High Petal Width',
+        'Species Setosa',
+        'Species Versicolor',
+        'Species Virginica'
+    ],
+    'Type': [
+        'OR', 'AND', 'AND', 'AND', 'Basic Event', 'Basic Event', 'Basic Event'
+    ],
+    'Parent ID': [
+        '', 'N1', 'N1', 'N1', 'N2', 'N3', 'N4'
+    ]
+}
+
+# Convert the fault tree data into a DataFrame
+fault_tree_df = pd.DataFrame(fault_tree_data)
+
+def create_fault_tree_from_df(df):
+    # Create a new directed graph
+    dot = Digraph()
+
+    # Add nodes to the graph
+    for _, row in df.iterrows():
+        node_id = row['ID']
+        label = row['Label']
+        node_type = row['Type'].strip().lower()
+        
+        if node_type == 'basic event':
+            shape = 'ellipse'
+        elif node_type == 'and':
+            shape = 'box'
+        elif node_type == 'or':
+            shape = 'diamond'
+        else:
+            shape = 'ellipse'  # Default shape for unspecified types
+        
+        dot.node(node_id, label, shape=shape)
+    
+    # Add edges to the graph
+    for _, row in df.iterrows():
+        if pd.notnull(row['Parent ID']) and row['Parent ID'] != '':
+            dot.edge(row['Parent ID'], row['ID'])
+    
+    return dot
+
+# Create the fault tree from the DataFrame
+fault_tree = create_fault_tree_from_df(fault_tree_df)
+
+# Render the graph to a PNG file
+graph_image_path = 'fault_tree'
+fault_tree.render(graph_image_path, format='png')
+
+# Display the graph in a Tkinter window
+def display_graph_in_tkinter(image_path):
+    # Create a Tkinter window
+    root = tk.Tk()
+    root.title("Fault Tree Visualization")
+    
+    # Load the image using PIL
+    image = Image.open(image_path + '.png')  # Add the .png extension
+    photo = ImageTk.PhotoImage(image)
+    
+    # Create a label to display the image
+    label = ttk.Label(root, image=photo)
+    label.image = photo  # Keep a reference to the image
+    label.pack()
+    
+    # Start the Tkinter main loop
+    root.mainloop()
+
+# Display the generated fault tree
+display_graph_in_tkinter(graph_image_path)

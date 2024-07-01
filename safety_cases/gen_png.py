@@ -581,7 +581,10 @@ specifications = {
         {'id': 'T2', 'label': '', 'text': 'HiFUZZ Tests:\nL1 (52 Passed)\nL2 (0 Passed, 2 Failed)', 'shape': 'none', 'fillcolor': 'tomato', 'margin': '0.0', 'rows': True},
         {'id': 'O3', 'label': 'Solution S6', 'text': 'A verbal warning is issued when the killswitch is activated.', 'shape': 'circle', 'fillcolor': 'gray80', 'margin': '0.1'},
         {'id': 'O4', 'label': 'Solution S7', 'text': 'A mobile app depicts the current location of each sUAS inflight.', 'shape': 'circle', 'fillcolor': 'gray80', 'margin': '0.1'},
-        {'id': 'O5', 'label': 'Solution S8', 'text': 'A unique color is used to label each drone, its RC & associated GUI Icons.', 'shape': 'circle', 'fillcolor': 'gray80', 'margin': '0.1'}
+        {'id': 'O5', 'label': 'Solution S8', 'text': 'A unique color is used to label each drone, its RC & associated GUI Icons.', 'shape': 'circle', 'fillcolor': 'gray80', 'margin': '0.1'},
+        {'id': 'B1', 'label': 'Backlogged', 'text': ' ', 'shape': 'rectangle', 'fillcolor': 'dodgerblue3', 'margin': '0.1'},
+        {'id': 'B2', 'label': 'Backlogged', 'text': ' ', 'shape': 'rectangle', 'fillcolor': 'dodgerblue3', 'margin': '0.1'},
+        {'id': 'U1', 'label': 'UX Test Passed', 'text': ' ', 'shape': 'rectangle', 'fillcolor': 'forestgreen', 'margin': '0.1'}
     ],
     'edges': [
         ('G1', 'S1'),
@@ -597,7 +600,10 @@ specifications = {
         ('G4', 'O4'),
         ('G5', 'O2'),
         ('O2', 'T2'),
-        ('G4', 'O5')
+        ('G4', 'O5'),
+        ('O3', 'B1'),
+        ('O4', 'B2'),
+        ('O5', 'U1'),
     ]
 }
 

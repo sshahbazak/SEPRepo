@@ -23,7 +23,7 @@ for example:
 """
 # def log_parser():
 	# path = "/home/droneresponse/Desktop/log_storage/"
-path = "/catkin_ws/src/fuzz_test_service/log_analyzer/"
+path = "/catkin_ws/src/fuzz_test_service/Fuzz/log_analyzer/"
 
 def get_names():
 	blueprint_name = glob.glob(path + "blueprint" + "/*.ulg")[0]

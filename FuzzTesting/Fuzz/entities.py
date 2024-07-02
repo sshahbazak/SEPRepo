@@ -45,6 +45,7 @@ class Fuzz_Test:
     def __post_init__(self):
         # Generate and store test combinations
         self.test_combinations = self.generate_combinations()
+        print('[Debug] Printing test combinations - '+str(self.test_combinations))
         self.setup_command_structure()
         # Initialize command_template based on provided configuration
         self.command_template = self.create_command_template()

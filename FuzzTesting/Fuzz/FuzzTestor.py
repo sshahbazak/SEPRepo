@@ -83,6 +83,11 @@ class Fuzz_Testor():
         self.mission_thread = threading.Thread(target=self.send_mission_thread)
         self.mission_thread.start()
 
+        self.output = None
+
+        # self.test_processing_thread = threading.Thread(target=self.process_tests)
+        # self.test_processing_thread.start()
+
         '''
         self.cleanup_dict = {
             "kill_command": self.kill_cleanup,
@@ -93,6 +98,8 @@ class Fuzz_Testor():
         '''
         self.fuzz_type = None 
         self.executed_tests = set()
+
+        
 
     
     def save_executed_tests(self):
@@ -157,6 +164,11 @@ class Fuzz_Testor():
         self.mission_abort = threading.Event()
         self.mqtt_connected = threading.Event()
         self.force_shutdown = threading.Event()
+
+        self.tests_queue = queue.Queue()
+        self.test_ready = threading.Event()
+
+        self.test_complete = threading.Event()
 
 
 
@@ -264,6 +276,8 @@ class Fuzz_Testor():
         throttle_value = self.throttle_value if fuzz_test.throttle else None
         throttle_lock = self.throttle_lock if fuzz_test.throttle else None
 
+        self.test_complete.clear()
+
         # Initialize ROS_Interface with throttle parameters if applicable
         self.ros_interface = ROS_Interface(
             throttle_value=throttle_value,
@@ -347,7 +361,9 @@ class Fuzz_Testor():
                 if not fuzz_to_execute:
                     if self.executed_tests == self.fuzz_test_combinations:
                         print('[fuzz_testor] finished with all tests!')
-                        self.trigger_shutdown()
+                        # self.trigger_shutdown()
+                        self.test_complete.set()
+                        return
                     return 
                 '''
                 TODO:
@@ -399,7 +415,7 @@ class Fuzz_Testor():
         source_container = "dr-onboardautonomy-px4"
         source_id = os.popen(f"docker ps -qf name={source_container}").read().strip()
         source_path = "/home/user/Firmware/build/px4_sitl_default/logs/"+ulg_file_path
-        destination_path = "/catkin_ws/src/fuzz_test_service/log_analyzer/contender_logs"
+        destination_path = "/catkin_ws/src/fuzz_test_service/Fuzz/log_analyzer/contender_logs"
         if len(glob.glob(destination_path + "/*.ulg")) != 0:
             os.system("rm "+destination_path+"contender_logs/*")
         os.system(f"docker cp {source_id}:{source_path} {destination_path}")
@@ -442,11 +458,30 @@ class Fuzz_Testor():
 
         json_output = json.dumps(json_object, indent=4)
 
+        self.output = json_output
+
         # Write the formatted message to the file
         with open("Fuzz_Test_Logs.txt", 'a') as f:
             f.write(json_output)
         return
+    
+    def submit_test(self, test):
+        self.tests_queue.put(test)
+        if not self.test_ready.is_set():
+            self.test_ready.set()
 
+    def process_tests(self):
+        while not self.force_shutdown.is_set():
+            self.test_ready.wait()  # Wait until a test is ready
+            try:
+                current_test = self.tests_queue.get(timeout=1)  # Get the test from the queue
+                self.run_test(current_test)  # Run the test
+                self.tests_queue.task_done()
+                if self.tests_queue.empty():
+                    self.test_ready.clear()
+            except queue.Empty:
+                continue
+    
     
 
     '''
@@ -455,7 +490,14 @@ class Fuzz_Testor():
     shutdown_timer - sets events to exit timer thread
     '''
     def trigger_shutdown(self):
-        os.kill(os.getpid(), signal.SIGINT)
+        # os.kill(os.getpid(), signal.SIGINT)
+        print('[shutdown_handler] forcing exit of all threads ....')
+        self.shutdown_timer()
+        self.ros_interface.shutdown()
+        print('[shutdown_handler] successfully shutdown rospy')
+        self.docker_interface.abort_mission()
+        print('[shutdown_handler] successfully shutdown docker')
+        return
 
     def signal_handler(self,sig, frame):
         self.handle_shutdown()
@@ -474,14 +516,38 @@ class Fuzz_Testor():
         print('[shutdown_handler] successfully shutdown docker')
         sys.exit(0) 
    
-fuzz_testor = Fuzz_Testor()
-fuzz_test = Fuzz_Test(drone_id="Polkadot",
-modes=['ALTCTL', 'POSCTL', 'STABILIZED', 'AUTO.LOITER', 'AUTO.RTL', 'AUTO.LAND'],
-geofence=[5],
-throttle=[3]
-)
-fuzz_testor.run_test(fuzz_test)
+# fuzz_testor = Fuzz_Testor()
+# fuzz_test1 = Fuzz_Test(drone_id="Polkadot",
+# modes=['OFFBOARD'],
+# geofence=[ 3, 4],
+# throttle=[2]
+# )
+# fuzz_test2 = Fuzz_Test(drone_id="Polkadot",
+# modes=['POSTCTL'],
+# geofence=[3]
+# )
+# fuzz_testor.run_test(fuzz_test1)
 
+# fuzz_testor.test_complete.wait()
 
+# print('Output of the first test - ' +str(fuzz_testor.output))
 
+# os.system("rm executed_tests.pkl")
+# os.system("rm Fuzz_Test_Logs.txt")
 
+# fuzz_testor.trigger_shutdown()
+
+# print('Running second test')
+# fuzz_testor = Fuzz_Testor()
+
+# # fuzz_testor.test_complete.clear()
+
+# fuzz_testor.run_test(fuzz_test2)
+
+# fuzz_testor.test_complete.wait()
+
+# print('Output of the second test - ' +str(fuzz_testor.output))
+
+# fuzz_testor.trigger_shutdown()
+
+# print('Shutdown everything')

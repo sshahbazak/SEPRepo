@@ -1,3 +1,40 @@
+"""
+This script implements a Genetic Algorithm for optimizing a model using data from fuzz testing.
+
+It starts with an initial processed dataset (i.e., the first generation), where each row in this dataset is treated as a chromosome. 
+The first generation begins by training an isolation forest ML model to predict anomalies, which are then scored based on their anomaly levels. 
+Afterward, the data that is less anomalous is segregated into parents and mutant candidates based on their anomaly scores. 
+Ten random records (modifiable) are selected from the parent candidates to undergo crossovers, creating a new set of inputs/probes that hopefully lead to better anomalies. 
+Additionally, ten random records (modifiable) are selected from the mutant candidates to undergo mutation, where some features are modified to obtain new probes.
+
+These probes are then merged and provided to the run_probe function, which utilized FuzzTestor to run them one by one and obtain the results. 
+The results are then stored back in the dataset to form the next generation, and the process repeats, leading to progressively better anomalies over time.
+
+Modules Imported:
+- Fuzz: Custom module for fuzz testing.
+- modelTrain: Custom module for training the model.
+
+Parameters:
+- NUM_GENERATIONS: Number of generations the genetic algorithm will run.
+- DATA_FILE: File path for the data CSV file.
+- NUM_PARENTS: Number of parents selected for crossover in each generation.
+- NUM_MUTANTS: Number of mutants generated in each generation.
+
+Feature Dictionary:
+- FEATURE_DICT: Dictionary containing features and their possible values or range tuples.
+- GEOFENCE_ACTION: Dictionary mapping geofence actions to numeric codes.
+- THROTTLE_DICT: Dictionary mapping throttle values to specific codes.
+- STATES_DICT: Dictionary mapping states to corresponding functions or values.
+- COLUMN_NAMES: List of column names for the dataset.
+
+Classes:
+- GeneticAlgorithm: Implements the genetic algorithm with methods for initialization, fitness calculation, selection, crossover, mutation, packaging results, running probes, and the main algorithm loop.
+
+Execution:
+- The GeneticAlgorithm class is instantiated and the algorithm is run using the run_algorithm method.
+"""
+
+
 import numpy as np
 import pandas as pd
 import random
@@ -9,14 +46,11 @@ import modelTrain as mt
 
 
 # Parameters
-# population_size = 50
 NUM_GENERATIONS = 10
-# mutation_rate = 0.01
 DATA_FILE = 'data.csv'
 NUM_PARENTS = 10
 NUM_MUTANTS = 10
 
-# Example feature dictionary
 # Each key is a feature, and each value is a list of possible values or a range tuple
 FEATURE_DICT = {
     'modes' : ['POSCTL','STABILIZED', 'OFFBOARD', 'ALTCTL', 'AUTO.LOITER', 'AUTO.RTL', 'AUTO.LAND'],
@@ -30,16 +64,17 @@ STATES_DICT = {'Flying': lambda: random.choice(['BriarWaypoint','BriarWaypoint2'
 COLUMN_NAMES = ['states', 'GF', 'GFPRED', 'GFACT', 'modes', 'throttle']
 
 class GeneticAlgorithm:
+    # Initializes the class, loads data, and sets up instances of Fuzz_Testor and Model.
     def __init__(self) -> None:
         self.population = pd.read_csv(DATA_FILE)
         self.fuzz_testor = ft.Fuzz_Testor()
         self.model_instance = mt.Model()
 
-    # Fitness function
+    # Fitness function: Calculates the fitness of the current population.
     def fitness_function(self):
         return self.model_instance.train_model(DATA_FILE)
     
-    # Selection function: Tournament selection
+    # Selection function: Selects parents for crossover using tournament selection.
     def select_parents(self, parent_candidates_df):
         print('[Genetic Algorithm] Selecting Parents for crossovers')
 
@@ -54,10 +89,9 @@ class GeneticAlgorithm:
             
         return parents_df[['states', 'GF', 'GFPRED', 'GFACT', 'modes', 'throttle']]
     
-    # Crossover function: Single-point crossover
+    # Crossover function: Performs single-point crossover on selected parents.
     def crossover(self, parents):
         print('[Genetic Algorithm] Crossing Over Parents')
-        # Adjust column names as needed
         crossover = []
         for i in range(0, len(parents)-1, 2):
             parent1, parent2 = parents.iloc[i], parents.iloc[i + 1]
@@ -85,6 +119,7 @@ class GeneticAlgorithm:
         
         return crossover_df
     
+    # Mutate: Introduces mutations into the population.
     def mutate(self, mutant_candidates_df):
         # Randomly sample 10 rows from mutant_candidates_df
         sample_indices = random.sample(range(len(mutant_candidates_df)), min(10, len(mutant_candidates_df)))
@@ -92,11 +127,9 @@ class GeneticAlgorithm:
 
         # Iterate over each sampled row
         for index, row in sampled_df.iterrows():
-            # print(row)
 
             # Randomly select a column from the filtered list   
             column_to_mutate = random.choice(mutant_candidates_df.columns)
-            # print(column_to_mutate)
             
             if column_to_mutate == 'GF':
                 # Mutate GF, GFPRED, and GFACT specifically
@@ -107,13 +140,12 @@ class GeneticAlgorithm:
                 else:
                     # sampled_df.at[index, 'GFPRED'] = random.choice(['Yes', 'No'])
                     sampled_df.at[index, 'GFPRED'] = 'Yes'
-                    sampled_df.at[index, 'GFACT'] = random.choice(feature_dict['GFACT'])
+                    sampled_df.at[index, 'GFACT'] = random.choice(FEATURE_DICT['GFACT'])
             # Mutate other columns based on their dictionary of eligible values
-            # elif column_to_mutate == 'modes':
             elif  column_to_mutate == 'modes':
-                sampled_df.at[index, 'modes'] = random.choice(feature_dict['modes'])
+                sampled_df.at[index, 'modes'] = random.choice(FEATURE_DICT['modes'])
             elif column_to_mutate == 'states':
-                choice = random.choice(feature_dict['states'])
+                choice = random.choice(FEATURE_DICT['states'])
                 if choice != 'Flying':
                     sampled_df.at[index, 'states'] = choice
                     sampled_df.at[index, 'GFPRED'] = None
@@ -121,7 +153,7 @@ class GeneticAlgorithm:
                 else:
                     sampled_df.at[index, 'states'] = choice
             elif column_to_mutate == 'throttle':
-                sampled_df.at[index, 'throttle'] = random.choice(feature_dict['throttle'])
+                sampled_df.at[index, 'throttle'] = random.choice(FEATURE_DICT['throttle'])
             # elif column_to_mutate == 'GFPRED':
             #     # Mutate GFPRED based on the value of GF
             #     if sampled_df.at[index, 'GF'] == 'Yes':
@@ -132,11 +164,12 @@ class GeneticAlgorithm:
             elif column_to_mutate == 'GFACT':
                 # Mutate GFPRED based on the value of GF
                 if sampled_df.at[index, 'GF'] == 'Yes':
-                    sampled_df.at[index, 'GFACT'] = random.choice(feature_dict['GFACT'])
+                    sampled_df.at[index, 'GFACT'] = random.choice(FEATURE_DICT['GFACT'])
                 else:
                     sampled_df.at[index, 'GFACT'] = None
         return sampled_df
     
+    # Packager: Packages the results into a dictionary for further processing.
     def packager(self, row, values):
         output_dict = json.loads(values)
         '''
@@ -167,27 +200,22 @@ class GeneticAlgorithm:
             'freefall_occurred': output_dict['freefall_occurred'],
             'mission_complete': output_dict['mission_complete']
         }
-        # print(merged_data)
         return merged_data
     
+    # run_probe: Runs probes on the dataset using fuzz testing.
     def run_probe(self, df):
         results = []
-        count = 1
-        # fuzz_testor = ft.Fuzz_Testor()
+        count = 0
         # Initialize an empty DataFrame with columns
         columns = ['initial_mode', 'states', 'Wind', 'GF', 'GFPRED', 'GFACT', 'kill_switch',
                 'modes', 'throttle', 'max_deviation', 'max_altitude', 'duration',
                 'final_landing_state', 'freefall_occurred', 'mission_complete']
         probe_data = []
-        row_count = 1
         for _, row in df.iterrows():
-            print('[Genetic Algorithm] Probe ' +str(row_count))
-            row_count += 1
+            print('[Genetic Algorithm] Probe ' +str(count))
             fuzz_test_args = {'drone_id': 'Polkadot'}
 
             # Dynamically add arguments if they are not None
-            # if not pd.isna(row['modes']):
-            #     print(row['modes'])
             fuzz_test_args['modes'] = [row['modes']]
             if not pd.isna(row['states']) and not pd.isna(row['GFACT']):
                 if random.choice([True, False]):
@@ -196,9 +224,6 @@ class GeneticAlgorithm:
                     row['GFACT'] = None
                     row['GFPRED'] = None
                     row['GF'] = 'No'
-            
-            
-                
             if not pd.isna(row['states']):
                 if row['states'] == 'Flying':
                     fuzz_test_args['states'] = [STATES_DICT['Flying']()]
@@ -213,34 +238,31 @@ class GeneticAlgorithm:
                 else:
                     fuzz_test_args['throttle'] = [THROTTLE_DICT.get(int(row['throttle']))]
 
-            # print('[Debug] Arguments - ' +str(fuzz_test_args))
-            # print('[Debug] Dataframe - ' +str(row))
             # Call the Fuzz_Test function with the unpacked dictionary
             fuzz_test = ft.Fuzz_Test(**fuzz_test_args)
             self.fuzz_testor.run_test(fuzz_test)
             self.fuzz_testor.test_complete.wait()
-            # print('[Debug] Probe with output is - ')
+
             var = self.packager(row, self.fuzz_testor.output)
             probe_data.append(var)
             os.system("rm executed_tests.pkl")
             os.system("rm Fuzz_Test_Logs.txt")
             self.fuzz_testor.test_complete.clear()
+            #Enabled for testing if you need less probes to run
             # if count >= 2:
             #     break
-            # count += 1
-
-        # fuzz_testor.trigger_shutdown()
+            count += 1
         probe_df = pd.DataFrame(probe_data, columns=columns)
         print('[Genetic Algorithms] Probe Results')
         print(probe_df)
         return probe_df
     
+    # run_algorithm: Main loop for running the genetic algorithm.
     def run_algorithm(self):
         for generation in range(NUM_GENERATIONS):
             print('[Genetic Algorithm] Sarting Generation ' +str(generation))
 
             df = self.fitness_function()
-            # fitness_scores = [fitness_function(chromosome) for chromosome in population]
 
             # Eliteness
             # elite_df = df[df['anomaly'] == -1]
@@ -251,14 +273,12 @@ class GeneticAlgorithm:
             # Calculate the median anomaly score
             median_score = normal_data['anomaly_score'].median()
 
-            
-
             # Splitting dataframe into parent candidates and non-candidates based on median score
             parent_candidates_df = normal_data[normal_data['anomaly_score'] < median_score]
             mutant_candidates_df = normal_data[normal_data['anomaly_score'] >= median_score][COLUMN_NAMES]
 
             # Crossover
-            parents = self.select_parents(parent_candidates_df, NUM_PARENTS)  # Ensure even number of parents
+            parents = self.select_parents(parent_candidates_df)  # Ensure even number of parents
 
             print('[Genetic Algorithm] Crossing Over Parents')
             crossover_df = self.crossover(parents)
@@ -270,18 +290,17 @@ class GeneticAlgorithm:
             # Run sim probes on mutated_df and crossover_df
             print('[Genetic Algorithm] Running probes')
             merged_df = pd.concat([crossover_df, mutated_df])
-            # print(merged_df)
-            # print(merged_df)
             probe_df = self.run_probe(merged_df)
 
             print('[Genetic Algorithm] Saving probe results')
-            existing_data = pd.read_csv('sample.csv')
-            updated_data = pd.concat([existing_data, probe_df], ignore_index=True)
-            updated_data.to_csv('sample.csv', index=False, na_rep='None')
-
+            self.population = pd.concat([self.population, probe_df], ignore_index=True)
+            self.population.to_csv('data.csv', index=False, na_rep='None')
+    
+    # Cleans up resources upon deletion.
     def __del__(self) -> None:
         self.fuzz_testor.trigger_shutdown()
 
 
 ga = GeneticAlgorithm()
 ga.run_algorithm()
+del ga

@@ -552,104 +552,386 @@
 
 # PROMPT DESIGN V1: WORKING (NEEDS BRANCH CONNECTING)
 
-from graphviz import Digraph
-import tkinter as tk
-from tkinter import ttk
-from PIL import Image, ImageTk
+# from graphviz import Digraph
+# import tkinter as tk
+# from tkinter import ttk
+# from PIL import Image, ImageTk
 
-def wrap_text(text, width):
-    words = text.split()
-    wrapped_lines = [' '.join(words[i:i+width]) for i in range(0, len(words), width)]
-    return '\n'.join(wrapped_lines)
+# def wrap_text(text, width):
+#     words = text.split()
+#     wrapped_lines = [' '.join(words[i:i+width]) for i in range(0, len(words), width)]
+#     return '\n'.join(wrapped_lines)
 
-def get_user_input():
-    nodes = []
-    edges = []
-    previous_node_id = None
+# def get_user_input():
+#     nodes = []
+#     edges = []
+#     previous_node_id = None
 
-    while True:
-        node_type = input("Enter the type of node (Goal, Strategy, Solution, HiFUZZ, or 'done' to finish): ")
-        if node_type.lower() == 'done':
-            break
+#     while True:
+#         node_type = input("Enter the type of node (Goal, Strategy, Solution, HiFUZZ, or 'done' to finish): ")
+#         if node_type.lower() == 'done':
+#             break
 
-        node_message = input("Enter the message for the node: ")
-        node_id = f"N{len(nodes) + 1}"
+#         node_message = input("Enter the message for the node: ")
+#         node_id = f"N{len(nodes) + 1}"
 
-        if node_type.lower() == 'goal':
-            shape = 'rectangle'
-            fillcolor = 'gray80'
-        elif node_type.lower() == 'strategy':
-            shape = 'parallelogram'
-            fillcolor = 'gray96'
-        elif node_type.lower() == 'solution':
-            shape = 'circle'
-            fillcolor = 'gray80'
-        elif node_type.lower() == 'hifuzz':
-            shape = 'none'
-            fillcolor = 'tomato'
-            node_message += '\n' + input("Enter additional HiFUZZ data (e.g., L1 (118 Passed, 12 Failed)): ")
-        else:
-            print("Invalid node type. Please enter again.")
-            continue
+#         if node_type.lower() == 'goal':
+#             shape = 'rectangle'
+#             fillcolor = 'gray80'
+#         elif node_type.lower() == 'strategy':
+#             shape = 'parallelogram'
+#             fillcolor = 'gray96'
+#         elif node_type.lower() == 'solution':
+#             shape = 'circle'
+#             fillcolor = 'gray80'
+#         elif node_type.lower() == 'hifuzz':
+#             shape = 'none'
+#             fillcolor = 'tomato'
+#             node_message += '\n' + input("Enter additional HiFUZZ data (e.g., L1 (118 Passed, 12 Failed)): ")
+#         else:
+#             print("Invalid node type. Please enter again.")
+#             continue
 
-        nodes.append({'id': node_id, 'label': node_type.capitalize(), 'text': node_message, 'shape': shape, 'fillcolor': fillcolor, 'margin': '0.1'})
+#         nodes.append({'id': node_id, 'label': node_type.capitalize(), 'text': node_message, 'shape': shape, 'fillcolor': fillcolor, 'margin': '0.1'})
 
-        if previous_node_id:
-            branch_choice = input("Is this node starting a new branch? (yes or no): ").lower()
-            if branch_choice == 'no':
-                edges.append((previous_node_id, node_id))
+#         if previous_node_id:
+#             branch_choice = input("Is this node starting a new branch? (yes or no): ").lower()
+#             if branch_choice == 'no':
+#                 edges.append((previous_node_id, node_id))
         
-        previous_node_id = node_id
+#         previous_node_id = node_id
 
-    return nodes, edges
+#     return nodes, edges
 
-# Get user input for nodes and edges
-spec_nodes, spec_edges = get_user_input()
+# # Get user input for nodes and edges
+# spec_nodes, spec_edges = get_user_input()
 
-# Create a new directed graph
-dot = Digraph()
+# # Create a new directed graph
+# dot = Digraph()
 
-# Add nodes with word wrapping and reduced font size
-for node in spec_nodes:
-    if node['shape'] == 'none':
-        text_lines = node['text'].split('\n')
-        label = f"""<
-            <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="tomato">
-                <TR><TD>{text_lines[0]}</TD></TR>
-                {''.join(f'<TR><TD>{line}</TD></TR>' for line in text_lines[1:])}
-            </TABLE>
-        >"""
-    else:
-        wrap_width = 3 if node['shape'] == 'circle' else 7
-        text = wrap_text(node['text'], wrap_width)
-        label = f'<{node["label"]}>\n{text}' if node['label'] else text
-    node_attrs = {
-        'fontsize': '15',
-        'margin': node.get('margin', '0.0'),
-        'fixedsize': 'false'
-    }
-    dot.node(node['id'], label, shape=node['shape'], fillcolor=node['fillcolor'], style='filled', **node_attrs)
+# # Add nodes with word wrapping and reduced font size
+# for node in spec_nodes:
+#     if node['shape'] == 'none':
+#         text_lines = node['text'].split('\n')
+#         label = f"""<
+#             <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4" BGCOLOR="tomato">
+#                 <TR><TD>{text_lines[0]}</TD></TR>
+#                 {''.join(f'<TR><TD>{line}</TD></TR>' for line in text_lines[1:])}
+#             </TABLE>
+#         >"""
+#     else:
+#         wrap_width = 3 if node['shape'] == 'circle' else 7
+#         text = wrap_text(node['text'], wrap_width)
+#         label = f'<{node["label"]}>\n{text}' if node['label'] else text
+#     node_attrs = {
+#         'fontsize': '15',
+#         'margin': node.get('margin', '0.0'),
+#         'fixedsize': 'false'
+#     }
+#     dot.node(node['id'], label, shape=node['shape'], fillcolor=node['fillcolor'], style='filled', **node_attrs)
 
-# Add edges
-for edge in spec_edges:
-    dot.edge(*edge)
+# # Add edges
+# for edge in spec_edges:
+#     dot.edge(*edge)
 
-# Render the graph to a PNG file
-graph_image_path = '/mnt/data/output_graph'
-dot.render(graph_image_path, format='png')
+# # Render the graph to a PNG file
+# graph_image_path = '/mnt/data/output_graph'
+# dot.render(graph_image_path, format='png')
 
-# Create a Tkinter window
-root = tk.Tk()
-root.title("Graph Visualization")
+# # Create a Tkinter window
+# root = tk.Tk()
+# root.title("Graph Visualization")
 
-# Load the image using PIL
-image = Image.open(graph_image_path + '.png') # Add the .png extension
-photo = ImageTk.PhotoImage(image)
+# # Load the image using PIL
+# image = Image.open(graph_image_path + '.png') # Add the .png extension
+# photo = ImageTk.PhotoImage(image)
 
-# Create a label to display the image
-label = ttk.Label(root, image=photo)
-label.image = photo # Keep a reference to the image
-label.pack()
+# # Create a label to display the image
+# label = ttk.Label(root, image=photo)
+# label.image = photo # Keep a reference to the image
+# label.pack()
 
-# Start the Tkinter main loop
-root.mainloop()
+# # Start the Tkinter main loop
+# root.mainloop()
+
+
+
+
+# import dash
+# from dash import dcc, html, Input, Output, State
+# import dash_cytoscape as cyto
+# import dash_bootstrap_components as dbc
+
+# app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+# # Initial graph data
+# nodes = [
+#     {"data": {"id": "A", "label": "Root Node"}, "position": {"x": 100, "y": 100}},
+#     {"data": {"id": "B", "label": "Child Node 1"}, "position": {"x": 200, "y": 200}},
+#     {"data": {"id": "C", "label": "Child Node 2"}, "position": {"x": 0, "y": 200}},
+# ]
+
+# edges = [
+#     {"data": {"source": "A", "target": "B"}},
+#     {"data": {"source": "A", "target": "C"}},
+# ]
+
+# default_stylesheet = [
+#     {"selector": "node", "style": {"label": "data(label)"}},
+#     {"selector": "edge", "style": {"curve-style": "bezier"}},
+# ]
+
+# app.layout = dbc.Container(
+#     [
+#         dbc.Row(
+#             [
+#                 dbc.Col(
+#                     cyto.Cytoscape(
+#                         id="cytoscape",
+#                         elements=nodes + edges,
+#                         layout={"name": "preset"},
+#                         style={"width": "100%", "height": "400px"},
+#                         stylesheet=default_stylesheet,
+#                     ),
+#                     md=8,
+#                 ),
+#                 dbc.Col(
+#                     [
+#                         dbc.Input(id="node-id", placeholder="Node ID", disabled=True),
+#                         dbc.Input(id="node-label", placeholder="Edit Node Label"),
+#                         dbc.Button("Update Node", id="update-node-btn", color="primary"),
+#                     ],
+#                     md=4,
+#                 ),
+#             ]
+#         ),
+#     ],
+#     fluid=True,
+# )
+
+# @app.callback(
+#     [Output("node-id", "value"), Output("node-label", "value")],
+#     [Input("cytoscape", "tapNodeData")],
+# )
+# def display_tapped_node(data):
+#     if data:
+#         return data["id"], data["label"]
+#     return "", ""
+
+
+# @app.callback(
+#     Output("cytoscape", "elements"),
+#     [Input("update-node-btn", "n_clicks")],
+#     [State("node-id", "value"), State("node-label", "value"), State("cytoscape", "elements")],
+# )
+# def update_node(n_clicks, node_id, node_label, elements):
+#     if n_clicks and node_id and node_label:
+#         for element in elements:
+#             if element["data"]["id"] == node_id:
+#                 element["data"]["label"] = node_label
+#     return elements
+
+
+# if __name__ == "__main__":
+#     app.run_server(debug=True)
+
+
+
+# import dash
+# from dash import dcc, html, Input, Output, State
+# import dash_cytoscape as cyto
+# import dash_bootstrap_components as dbc
+
+# # Initial decision tree data
+# elements = [
+#     {'data': {'id': 'G1', 'label': 'Goal G1: When needed, the kill switch stops the motors on the targeted drone.'}, 'position': {'x': 250, 'y': 50}},
+#     {'data': {'id': 'S1', 'label': 'Strategy: Argue that the RPIC can kill motors on the targeted drone when needed.'}, 'position': {'x': 250, 'y': 150}},
+#     {'data': {'id': 'G2', 'label': 'Goal G2: After the killswitch is depressed for 3 secs, the motors are killed.'}, 'position': {'x': 150, 'y': 250}},
+#     {'data': {'id': 'G3', 'label': 'Goal G3: When the drone is in the air, the user only kills motors for the intended drone.'}, 'position': {'x': 350, 'y': 250}},
+#     {'data': {'id': 'S2', 'label': 'Strategy: Argue that the operator has sufficient information and appropriate affordances to kill the motors on the correct drone.'}, 'position': {'x': 250, 'y': 350}},
+#     {'data': {'id': 'G4', 'label': 'Goal G4: The RPIC has sufficient feedback on which drone is to be "killed".'}, 'position': {'x': 150, 'y': 450}},
+#     {'data': {'id': 'G5', 'label': 'Goal G5: RPICs have at least two seconds to avert the kill after alerts are raised.'}, 'position': {'x': 350, 'y': 450}},
+#     {'data': {'id': 'S3', 'label': 'Strategy: Argue that the user has sufficient time to abort the kill if they attempt to kill the wrong drone'}, 'position': {'x': 250, 'y': 550}},
+#     {'data': {'id': 'O1', 'label': 'Solution S1: HiFUZZ tests pass on combos of flight modes, flying states, and killswitch press durations.'}, 'position': {'x': 150, 'y': 650}},
+#     {'data': {'id': 'T1', 'label': 'HiFUZZ Tests: L1 (118 Passed, 12 Failed)\nL2 (2 Passed, 1 Failed)'}, 'position': {'x': 350, 'y': 650}},
+#     {'data': {'source': 'G1', 'target': 'S1'}},
+#     {'data': {'source': 'S1', 'target': 'G2'}},
+#     {'data': {'source': 'S1', 'target': 'G3'}},
+#     {'data': {'source': 'G2', 'target': 'O1'}},
+#     {'data': {'source': 'O1', 'target': 'T1'}},
+#     {'data': {'source': 'G3', 'target': 'S2'}},
+#     {'data': {'source': 'G3', 'target': 'S3'}},
+#     {'data': {'source': 'S2', 'target': 'G4'}},
+#     {'data': {'source': 'S3', 'target': 'G5'}},
+# ]
+
+
+# default_stylesheet = [
+#     {
+#         'selector': 'node', 
+#         'style': {
+#             'label': 'data(label)',
+#             'text-wrap': 'wrap',
+#             'text-max-width': '180px',
+#             'width': '200px',
+#             'height': '120px',
+#             'shape': 'roundrectangle',
+#             'background-color': '#007bff',
+#             'border-width': '2px',
+#             'border-color': '#333333',
+#             'color': '#ffffff',
+#             'text-valign': 'center',
+#             'text-halign': 'center'
+#         }
+#     },
+#     {'selector': 'edge', 'style': {'curve-style': 'bezier'}}
+# ]
+
+# app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+# app.layout = dbc.Container([
+#     dbc.Row([
+#         dbc.Col([
+#             cyto.Cytoscape(
+#                 id='cytoscape',
+#                 elements=elements,
+#                 layout={'name': 'preset'},
+#                 style={'width': '100%', 'height': '1000px'},
+#                 stylesheet=default_stylesheet
+#             ),
+#         ], md=8),
+#         dbc.Col([
+#             dbc.Input(id='node-id', placeholder='Node ID', disabled=True, className='mb-2'),
+#             dbc.Textarea(id='node-label', placeholder='Edit Node Label', style={'height': '100px'}, className='mb-2'),
+#             dbc.Button('Update Node', id='update-node-btn', color='primary')
+#         ], md=4)
+#     ])
+# ])
+
+# @app.callback(
+#     [Output('node-id', 'value'), Output('node-label', 'value')],
+#     [Input('cytoscape', 'tapNodeData')]
+# )
+# def display_tapped_node(data):
+#     if data:
+#         return data['id'], data['label']
+#     return '', ''
+
+# @app.callback(
+#     Output('cytoscape', 'elements'),
+#     [Input('update-node-btn', 'n_clicks')],
+#     [State('node-id', 'value'), State('node-label', 'value'), State('cytoscape', 'elements')]
+# )
+# def update_node(n_clicks, node_id, node_label, elements):
+#     if n_clicks and node_id and node_label:
+#         for element in elements:
+#             if 'id' in element['data'] and element['data']['id'] == node_id:
+#                 element['data']['label'] = node_label
+#     return elements
+
+# if __name__ == '__main__':
+#     app.run_server(debug=True)
+
+
+
+
+import dash
+from dash import dcc, html, Input, Output, State
+import dash_cytoscape as cyto
+import dash_bootstrap_components as dbc
+
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+# Initial graph data
+nodes = [
+    {"data": {"id": "A", "label": "Root Node"}, "position": {"x": 100, "y": 100}},
+    {"data": {"id": "B", "label": "Child Node 1"}, "position": {"x": 200, "y": 200}},
+    {"data": {"id": "C", "label": "Child Node 2"}, "position": {"x": 0, "y": 200}},
+    {"data": {"id": "D", "label": "Child Node 3"}, "position": {"x": -100, "y": 300}},
+    {"data": {"id": "E", "label": "Child Node 4"}, "position": {"x": 300, "y": 300}},
+]
+
+edges = [
+    {"data": {"source": "A", "target": "B"}},
+    {"data": {"source": "A", "target": "C"}},
+    {"data": {"source": "C", "target": "D"}},
+    {"data": {"source": "B", "target": "E"}},
+]
+
+# Define the default stylesheet for the graph
+default_stylesheet = [
+    {
+        'selector': 'node',
+        'style': {
+            'label': 'data(label)',
+            'text-wrap': 'wrap',
+            'text-max-width': '100px',
+            'width': '100px',
+            'height': '50px',
+            'shape': 'roundrectangle',
+            'background-color': '#007bff',
+            'border-width': '2px',
+            'border-color': '#333333',
+            'color': '#ffffff',
+            'text-valign': 'center',
+            'text-halign': 'center',
+            'font-size': '20px'
+        }
+    },
+    {'selector': 'edge', 'style': {'curve-style': 'bezier'}}
+]
+
+
+app.layout = dbc.Container(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    cyto.Cytoscape(
+                        id="cytoscape",
+                        elements=nodes + edges,
+                        layout={"name": "preset"},
+                        style={"width": "100%", "height": "800px"},
+                        stylesheet=default_stylesheet,
+                    ),
+                    md=8,
+                ),
+                dbc.Col(
+                    [
+                        dbc.Input(id="node-id", placeholder="Node ID", disabled=True),
+                        dbc.Input(id="node-label", placeholder="Edit Node Label"),
+                        dbc.Button("Update Node", id="update-node-btn", color="primary"),
+                    ],
+                    md=4,
+                ),
+            ]
+        ),
+    ],
+    fluid=True,
+)
+
+@app.callback(
+    [Output("node-id", "value"), Output("node-label", "value")],
+    [Input("cytoscape", "tapNodeData")],
+)
+def display_tapped_node(data):
+    if data:
+        return data["id"], data["label"]
+    return "", ""
+
+
+@app.callback(
+    Output("cytoscape", "elements"),
+    [Input("update-node-btn", "n_clicks")],
+    [State("node-id", "value"), State("node-label", "value"), State("cytoscape", "elements")],
+)
+def update_node(n_clicks, node_id, node_label, elements):
+    if n_clicks and node_id and node_label:
+        for element in elements:
+            if element["data"]["id"] == node_id:
+                element["data"]["label"] = node_label
+    return elements
+
+
+if __name__ == "__main__":
+    app.run_server(debug=True)

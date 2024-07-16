@@ -1,0 +1,29 @@
+{
+  "nodes": [
+    { "id": "G1", "label":"<Goal G0>", "text": "The user is aware of camera malfunction", "shape": "roundrectangle", "fillcolor": "mediumgrey", "width": "200px", "height": "180px"},
+    { "id": "G2", "label":"<Goal G1>", "text": "Camera malfunctions are detected by runtime monitors in a timely fashion", "shape": "roundrectangle", "fillcolor": "mediumgrey", "width": "200px", "height": "180px"},
+    { "id": "G3", "label":"<Goal G2>", "text": "Camera malfunctions are mitigated by redundancy of components", "shape": "roundrectangle", "fillcolor": "mediumgrey", "width": "200px", "height": "180px"},
+    { "id": "G4", "label":"<Goal G3>", "text": "The system alerts the user when Camera malfunctions occur", "shape": "roundrectangle", "fillcolor": "mediumgrey", "width": "200px", "height": "180px"},
+    { "id": "A1", "label":"<Strategy>", "text": "Argue that the system provides the user with awareness of camera malfunctions", "shape": "roundrectangle", "fillcolor": "silver", "width": "400px", "height": "180px"},
+    { "id": "A2", "label":"<Strategy-2>", "text": "Argue that the runtime monitor detects Camera malfunctions every 10 seconds", "shape": "roundrectangle", "fillcolor": "silver", "width": "400px", "height": "180px"},
+    { "id": "A3", "label":"<Strategy-3>", "text": "Argue that appropriate redundant Camera components are available for use when needed", "shape": "roundrectangle", "fillcolor": "silver", "width": "400px", "height": "180px"},
+    { "id": "A4", "label":"<Strategy-4>", "text": "Argue that effective runtime user alerts are generated", "shape": "roundrectangle", "fillcolor": "silver", "width": "400px", "height": "180px"},
+    { "id": "S1", "label":"<Solution S1>", "text": "The runtime monitor checks that the camera is functioning every 5 seconds", "shape": "ellipse", "fillcolor": "gainsboro"},
+    { "id": "S2", "label":"<Solution S2>", "text": "When a camera malfunction occurs an effective user alert is raised", "shape": "ellipse", "fillcolor": "gainsboro"},
+    { "id": "S3", "label":"<Solution S3>", "text": "The downward facing camera is activated and used when primary search camera fails", "shape": "ellipse", "fillcolor": "gainsboro"},
+    { "id": "S4", "label":"<Solution S4>", "text": "Best practices for designing for situational awareness have been applied", "shape": "ellipse", "fillcolor": "gainsboro"}
+  ],
+  "edges": [
+    { "source": "G1", "target": "A1" },
+    { "source": "A1", "target": "G2" },
+    { "source": "A1", "target": "G3" },
+    { "source": "A1", "target": "G4" },
+    { "source": "G2", "target": "A2" },
+    { "source": "G3", "target": "A3" },
+    { "source": "G4", "target": "A4" },
+    { "source": "A2", "target": "S1" },
+    { "source": "A2", "target": "S2" },
+    { "source": "A3", "target": "S3" },
+    { "source": "A4", "target": "S4" }
+  ]
+}

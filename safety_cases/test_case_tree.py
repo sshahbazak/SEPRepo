@@ -13,20 +13,37 @@ json_file_path = os.path.join(os.getcwd(), 'C:\\Users\\jmimnaugh\\Documents\\VSc
 with open(json_file_path, 'r') as f:
     data = json.load(f)
 
-# Extract nodes and edges from the JSON data
-nodes = [
-    {
-        "data": {"id": node["id"], "label": f'{node["label"]}\n{node["text"]}', "shape": node["shape"], "fillcolor": node["fillcolor"]},
-        "position": {"x": 0, "y": 0},  # Initial positions; will be laid out by Cytoscape
+# Define properties for different node types
+node_properties = {
+    "GOAL": {"shape": "square", "fillcolor": "mediumgrey", "width": "200px", "height": "200px", "prefix": "<Goal "},
+    "SOLUTION": {"shape": "ellipse", "fillcolor": "gainsboro", "width": "220px", "height": "220px", "prefix": "<Solution "},
+    "STRATEGY": {"shape": "roundrectangle", "fillcolor": "silver", "width": "400px", "height": "200px", "prefix": "<Strategy "},
+}
+
+# Extract nodes and edges from the JSON data and add properties
+nodes = []
+for node in data["nodes"]:
+    node_type = node["type"]
+    properties = node_properties.get(node_type, {})
+    
+    # Extract the first and last character of the node ID
+    id_label = f'{node["id"][0]}{node["id"][-1]}'
+    
+    heading = f'{properties["prefix"]}{id_label}>'
+    
+    label = f"{heading}\n{node['label']}"
+    
+    node_data = {
+        "data": {"id": node["id"], "label": label, "shape": properties.get("shape"), "fillcolor": properties.get("fillcolor")},
+        "position": {"x": 0, "y": 0},
         "style": {
-            "background-color": node["fillcolor"],
-            "shape": node["shape"],
-            "width": node.get("width", "200px"),
-            "height": node.get("height", "180px")
+            "background-color": properties.get("fillcolor", "grey"),
+            "shape": properties.get("shape", "rectangle"),
+            "width": properties.get("width", "200px"),
+            "height": properties.get("height", "180px")
         }
     }
-    for node in data["nodes"]
-]
+    nodes.append(node_data)
 
 edges = [
     {"data": {"source": edge["source"], "target": edge["target"]}}
@@ -77,8 +94,8 @@ app.layout = dbc.Container(
                         dbc.Input(id="node-text", placeholder="Edit Node Text"),  # New input for node text
                         dbc.Row(
                             [
-                                dbc.Col(dbc.Button("Update Node", id="update-node-btn", color="primary"), width="auto"),
-                                dbc.Col(dbc.Button("Delete Node", id="delete-node-btn", color="danger"), width="auto"),
+                                dbc.Col(dbc.Button("Update Node", id={"type": "dynamic-button", "index": "update-node-btn"}, color="primary"), width="auto"),
+                                dbc.Col(dbc.Button("Delete Node", id={"type": "dynamic-button", "index": "delete-node-btn"}, color="danger"), width="auto"),
                             ],
                             justify="start",
                             align="center",
@@ -110,16 +127,16 @@ app.layout = dbc.Container(
 )
 def display_tapped_node(data):
     if data:
-        label, text = data["label"].split('\n', 1)
+        label, text = data["label"], ""
         return data["id"], label, text
     return "", "", ""
 
 @app.callback(
     Output("cytoscape", "elements"),
-    [Input("update-node-btn", "n_clicks"),
+    [Input({"type": "dynamic-button", "index": "update-node-btn"}, "n_clicks"),
      Input("add-node-btn", "n_clicks"),
      Input("add-edge-btn", "n_clicks"),
-     Input("delete-node-btn", "n_clicks")],  # Directly listen to delete-node-btn
+     Input({"type": "dynamic-button", "index": "delete-node-btn"}, "n_clicks")],  # Directly listen to delete-node-btn
     [State("node-id", "value"), State("node-label", "value"), State("node-text", "value"), State("cytoscape", "elements"),  # Added node-text state
      State("new-node-id", "value"), State("new-node-label", "value"),
      State("new-node-text", "value"), State("new-node-shape", "value"),
@@ -139,13 +156,19 @@ def update_elements(n_clicks_update, n_clicks_add_node, n_clicks_add_edge, n_cli
             if element["data"]["id"] == node_id:
                 element["data"]["label"] = f'{node_label}\n{node_text}'  # Update both label and text
     elif button_id == "add-node-btn" and new_node_id and new_node_label:
+        node_type = new_node_id[0]
+        node_type_full = {"G": "GOAL", "A": "STRATEGY", "S": "SOLUTION"}.get(node_type, "NODE")
+        properties = node_properties.get(node_type_full, {})
+        heading = f'{properties["prefix"]}{new_node_id[1:]}>'
+        label = f"{heading}\n{new_node_label}\n{new_node_text}"
+        
         new_node = {
-            "data": {"id": new_node_id, "label": f'{new_node_label}\n{new_node_text}', "shape": new_node_shape, "fillcolor": new_node_color},
+            "data": {"id": new_node_id, "label": label, "shape": properties.get("shape"), "fillcolor": new_node_color},
             "style": {
                 "background-color": new_node_color,
-                "shape": new_node_shape,
-                "width": "200px",  # You can adjust the default width
-                "height": "180px"  # You can adjust the default height
+                "shape": properties.get("shape"),
+                "width": properties.get("width", "200px"),
+                "height": properties.get("height", "180px")
             }
         }
         elements.append(new_node)

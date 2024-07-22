@@ -15,9 +15,9 @@ with open(json_file_path, 'r') as f:
 
 # Define properties for different node types
 node_properties = {
-    "GOAL": {"shape": "square", "fillcolor": "mediumgrey", "width": "200px", "height": "200px", "prefix": "<Goal "},
-    "SOLUTION": {"shape": "ellipse", "fillcolor": "gainsboro", "width": "230px", "height": "220px", "prefix": "<Solution "},
-    "STRATEGY": {"shape": "roundrectangle", "fillcolor": "silver", "width": "400px", "height": "200px", "prefix": "<Strategy "},
+    "GOAL": {"shape": "square", "fillcolor": "mediumgrey", "width": "250px", "height": "250px", "prefix": "<Goal "},
+    "SOLUTION": {"shape": "ellipse", "fillcolor": "gainsboro", "width": "400px", "height": "400px", "prefix": "<Solution "},
+    "STRATEGY": {"shape": "roundrectangle", "fillcolor": "silver", "width": "400px", "height": "300px", "prefix": "<Strategy "},
 }
 
 # Extract nodes and edges from the JSON data and add properties
@@ -29,7 +29,7 @@ for node in data["nodes"]:
     # Extract the first and last character of the node ID
     id_label = f'{node["id"][0]}{node["id"][-1]}'
     
-    heading = f'{properties["prefix"]}{id_label}>'
+    heading = f'{properties["prefix"]}{id_label}>' if "prefix" in properties else f'<{node["id"]}>'
     
     label = f"{heading}\n{node['label']}"
     
@@ -64,7 +64,7 @@ default_stylesheet = [
             'color': '#000000',
             'text-valign': 'center',
             'text-halign': 'center',
-            'font-size': '21px',
+            'font-size': '24px',
             'shape': 'data(shape)'  # Use shape from data
         }
     },
@@ -94,8 +94,8 @@ app.layout = dbc.Container(
                         dbc.Input(id="node-text", placeholder="Edit Node Text"),  # New input for node text
                         dbc.Row(
                             [
-                                dbc.Col(dbc.Button("Update Node", id={"type": "dynamic-button", "index": "update-node-btn"}, color="primary"), width="auto"),
-                                dbc.Col(dbc.Button("Delete Node", id={"type": "dynamic-button", "index": "delete-node-btn"}, color="danger"), width="auto"),
+                                dbc.Col(dbc.Button("Update Node", id="update-node-btn", color="primary"), width="auto"),
+                                dbc.Col(dbc.Button("Delete Node", id="delete-node-btn", color="danger"), width="auto"),
                             ],
                             justify="start",
                             align="center",
@@ -122,29 +122,29 @@ app.layout = dbc.Container(
 )
 
 @app.callback(
-    [Output("node-id", "value"), Output("node-label", "value"), Output("node-text", "value")],  # Removed delete button output
+    [Output("node-id", "value"), Output("node-label", "value"), Output("node-text", "value")],
     [Input("cytoscape", "tapNodeData")],
 )
 def display_tapped_node(data):
     if data:
-        label, text = data["label"], ""
+        label, text = data["label"].split('\n', 1)
         return data["id"], label, text
     return "", "", ""
 
 @app.callback(
     Output("cytoscape", "elements"),
-    [Input({"type": "dynamic-button", "index": "update-node-btn"}, "n_clicks"),
+    [Input("update-node-btn", "n_clicks"),
      Input("add-node-btn", "n_clicks"),
      Input("add-edge-btn", "n_clicks"),
-     Input({"type": "dynamic-button", "index": "delete-node-btn"}, "n_clicks")],  # Directly listen to delete-node-btn
-    [State("node-id", "value"), State("node-label", "value"), State("node-text", "value"), State("cytoscape", "elements"),  # Added node-text state
+     Input("delete-node-btn", "n_clicks")],
+    [State("node-id", "value"), State("node-label", "value"), State("node-text", "value"), State("cytoscape", "elements"),
      State("new-node-id", "value"), State("new-node-label", "value"),
      State("new-node-text", "value"), State("new-node-shape", "value"),
      State("new-node-color", "value"), State("source-node-id", "value"),
      State("target-node-id", "value")]
 )
 def update_elements(n_clicks_update, n_clicks_add_node, n_clicks_add_edge, n_clicks_delete_node,
-                    node_id, node_label, node_text, elements, new_node_id, new_node_label,  # Added node_text parameter
+                    node_id, node_label, node_text, elements, new_node_id, new_node_label,
                     new_node_text, new_node_shape, new_node_color, source_node_id, target_node_id):
     ctx = dash.callback_context
     if not ctx.triggered:
@@ -154,12 +154,14 @@ def update_elements(n_clicks_update, n_clicks_add_node, n_clicks_add_edge, n_cli
     if button_id == "update-node-btn" and node_id and node_label:
         for element in elements:
             if element["data"]["id"] == node_id:
-                element["data"]["label"] = f'{node_label}\n{node_text}'  # Update both label and text
+                label = f"{node_label}\n{node_text}"  # Update both label and text directly
+                element["data"]["label"] = label
     elif button_id == "add-node-btn" and new_node_id and new_node_label:
         node_type = new_node_id[0]
         node_type_full = {"G": "GOAL", "A": "STRATEGY", "S": "SOLUTION"}.get(node_type, "NODE")
         properties = node_properties.get(node_type_full, {})
-        heading = f'{properties["prefix"]}{new_node_id[1:]}>'
+        id_label = f'{new_node_id[0]}{new_node_id[-1]}'
+        heading = f'{properties["prefix"]}{id_label}>' if "prefix" in properties else f'<{new_node_id}>'
         label = f"{heading}\n{new_node_label}\n{new_node_text}"
         
         new_node = {
@@ -181,6 +183,7 @@ def update_elements(n_clicks_update, n_clicks_add_node, n_clicks_add_edge, n_cli
         else:
             print(f"Cannot create edge with non-existent source '{source_node_id}' or target '{target_node_id}'.")
     elif button_id == "delete-node-btn" and node_id:  # Use node_id instead of delete_node_id
+        # Remove the node and any edges connected to it
         elements = [element for element in elements if element["data"]["id"] != node_id and element["data"].get("source") != node_id and element["data"].get("target") != node_id]
 
     return elements

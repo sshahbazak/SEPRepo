@@ -1,39 +1,25 @@
-{
-  "nodes": [
-    {"id": "G0", "type": "GOAL", "label": "The user is aware of the accidental action of deactivating communication device"},
-    {"id": "STR1", "type": "STRATEGY", "label": "Argue that the system provides the user with awareness of the accidental deactivation"},
-    {"id": "G1", "type": "GOAL", "label": "A communication loss is detected whenever a communication setting changes"},
-    {"id": "G2", "type": "GOAL", "label": "The system makes the user aware of the communication loss"},
-    {"id": "G3", "type": "GOAL", "label": "The system alerts the user"},
-    {"id": "G4", "type": "GOAL", "label": "The system displays a warning message"},
-    {"id": "G5", "type": "GOAL", "label": "The system provides instructions to activate the backup (hand-held) controller"},
-    {"id": "STR2", "type": "STRATEGY", "label": "Argue that the runtime monitor detects a communication loss when the setting changes."},
-    {"id": "STR3", "type": "STRATEGY", "label": "Argue that effective alarming mechanisms are generated."},
-    {"id": "SOL1", "type": "SOLUTION", "label": "The runtime monitor gets a notification whenever the communication setting changes."},
-    {"id": "SOL2", "type": "SOLUTION", "label": "When a communication loss occurs an effective user alert is raised."},
-    {"id": "SOL3", "type": "SOLUTION", "label": "The system notifies the RPIC through both visual and audible alarms."},
-    {"id": "SOL4", "type": "SOLUTION", "label": "The system displays a warning message on the control interface."},
-    {"id": "SOL5", "type": "SOLUTION", "label": "The system provides clear instructions on the control interface on how to activate the backup (hand-held) controller."},
-    {"id": "STR4", "type": "STRATEGY", "label": "Argue that effective alerts are generated."},
-    {"id": "STR5", "type": "STRATEGY", "label": "Argue that effective warning message are generated."},
-    {"id": "STR6", "type": "STRATEGY", "label": "Argue that clear instructions are generated."}
-  ],
-  "edges": [
-    {"source": "G0", "target": "STR1"},
-    {"source": "STR1", "target": "G1"},
-    {"source": "STR1", "target": "G2"},
-    {"source": "G1", "target": "STR2"},
-    {"source": "G2", "target": "STR3"},
-    {"source": "STR3", "target": "G3"},
-    {"source": "STR3", "target": "G4"},
-    {"source": "STR3", "target": "G5"},
-    {"source": "G3", "target": "STR4"},
-    {"source": "G4", "target": "STR5"},
-    {"source": "G5", "target": "STR6"},
-    {"source": "STR2", "target": "SOL1"},
-    {"source": "STR2", "target": "SOL2"},
-    {"source": "STR4", "target": "SOL3"},
-    {"source": "STR5", "target": "SOL4"},
-    {"source": "STR6", "target": "SOL5"}
+{"nodes": [
+  {"id": "G0", "type": "GOAL", "label": "A UAV control is safely handed over from autonomous pilot (AP)  to a human operator"},
+   {"id": "STR1", "type": "STRATEGY", "label": "Argue that the system prevents any dramatic, dangerous UAV reponses"},
+   {"id": "G1", "type": "GOAL", "label": "Handover must be initiated by the human who will manually fly the drone."},
+   {"id": "G2", "type": "GOAL", "label": "The system must have an inbuilt failsafe to prevent the UAV from flying dramatically and dangerously."},
+   {"id": "STR2", "type": "STRATEGY", "label": "Argue that the system mitigates hand over control issues."},
+   {"id": "STR3", "type": "STRATEGY", "label": "Argue that the system implements failsafe mechanisms to prevent the UAV from responding dramatically during hand over."},
+   {"id": "SOL1", "type": "SOLUTION", "label": "The system should not allow the autonomous pilot to automatically hand control to the human operator as the operator might be unprepared to take control."},
+   {"id": "SOL2", "type": "SOLUTION", "label": "Coordination must occur between the two roles of the autonomous pilot and the human operator"},
+   {"id": "SOL3", "type": "SOLUTION", "label": "The UAV may descend rapidly but will stop and hover before reaching the ground, ifthe throttle is set downwards."},
+   {"id": "SOL4", "type": "SOLUTION", "label": "The UAV may ascend rapidly but will stop and hover before reaching the limited altitude, if the throttle is set upwards."}
+  ], 
+  "edges": 
+  [
+   {"source": "G0", "target": "STR1"},
+   {"source": "STR1", "target": "G1"},
+   {"source": "STR1", "target": "G2"},
+   {"source": "G1", "target": "STR2"},
+   {"source": "G2", "target": "STR3"},
+   {"source": "STR2", "target": "SOL1"},
+   {"source": "STR2", "target": "SOL2"},
+   {"source": "STR3", "target": "SOL3"},
+   {"source": "STR3", "target": "SOL4"}
   ]
 }
